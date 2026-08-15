@@ -5,8 +5,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_APP_NAME: z.string().default("YourPrinter"),
 
   // Supabase
-  NEXT_PUBLIC_SUPABASE_URL: z.string().optional().default("https://example.supabase.co"),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url({ message: "NEXT_PUBLIC_SUPABASE_URL is required" }),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, { message: "NEXT_PUBLIC_SUPABASE_ANON_KEY is required" }),
   DATABASE_URL: z.string().optional(),
 
   // Backblaze B2 — server-only, NEVER use NEXT_PUBLIC_ for these

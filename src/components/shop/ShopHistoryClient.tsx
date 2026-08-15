@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, ChevronLeft, ChevronRight, FileText, User, Calendar } from "lucide-react";
 import { toast } from "sonner";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 
 type Order = any; // We can use the same type from Dashboard if extracted, using any for now
 
@@ -18,10 +18,7 @@ export default function ShopHistoryClient({ shopId }: { shopId: string }) {
 
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient();
 
   const fetchOrders = async () => {
     setLoading(true);

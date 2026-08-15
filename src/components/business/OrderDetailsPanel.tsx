@@ -7,7 +7,7 @@ import {
   Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Download, 
   Image as ImageIcon, Trash2, QrCode
 } from "lucide-react";
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 export default function OrderDetailsPanel({ 
@@ -26,10 +26,7 @@ export default function OrderDetailsPanel({
   const [shopNotes, setShopNotes] = useState("");
   const notesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient();
 
   const fetchOrder = useCallback(async () => {
     try {
