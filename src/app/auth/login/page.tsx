@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   description: "Login to your YourPrinter account",
 };
 
+import { Suspense } from "react";
+
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }
