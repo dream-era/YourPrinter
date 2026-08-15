@@ -1,0 +1,35 @@
+{
+  "build": {
+    "distDir": "../frontend",
+    "devPath": "../frontend",
+    "beforeDevCommand": "",
+    "beforeBuildCommand": ""
+  },
+  "package": {
+    "productName": "AutoPrintAgent",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": true
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.myprinter.autoprint",
+      "icon": []
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "YourPrinter - AutoPrint Spooler Agent",
+        "width": 900,
+        "height": 650,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ]
+  }
+}

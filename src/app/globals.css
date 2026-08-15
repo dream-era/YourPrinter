@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-brand: #5382EB;
+  --color-accent-lime: #D9FF47;
+  --color-background-brand: #F7F8FC;
+  --color-text-dark: #111827;
+  
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  
+  --animate-glass-shine: glass-shine 2s infinite ease-in-out;
+}
+
+@keyframes glass-shine {
+  0% { transform: translateX(-150%) skewX(-30deg); }
+  100% { transform: translateX(250%) skewX(-30deg); }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)];
+  }
+  
+  .soft-shadow {
+    @apply shadow-[0_12px_48px_-12px_rgba(83,130,235,0.15)];
+  }
+}
+
+body {
+  @apply text-text-dark bg-background-brand overflow-x-hidden;
+}
+
+/* Hide scrollbar for clean carousel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

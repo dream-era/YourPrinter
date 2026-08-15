@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPrint Spooler Agent</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar / Pairing Controls -->
+    <aside class="sidebar glass">
+      <div class="brand">
+        <span class="logo-dot"></span>
+        <h2>AutoPrint <span>v1.0</span></h2>
+      </div>
+
+      <!-- Pairing Section -->
+      <section id="pairing-section" class="card-section">
+        <h3>Pair Shop Hub</h3>
+        <div class="input-group">
+          <label>Shop ID</label>
+          <input type="text" id="shop-id" placeholder="e.g. shop-101">
+        </div>
+        <div class="input-group">
+          <label>Activation Token</label>
+          <input type="password" id="pairing-token" placeholder="Enter security token">
+        </div>
+        <button id="btn-pair" class="btn btn-primary">Pair & Authenticate</button>
+      </section>
+
+      <!-- Active Printer Configuration -->
+      <section class="card-section mt-4">
+        <h3>Hardware Selector</h3>
+        <div class="input-group">
+          <label>Select Target Printer</label>
+          <select id="printer-select">
+            <option value="">Querying printers...</option>
+          </select>
+        </div>
+        <button id="btn-refresh-printers" class="btn btn-secondary mb-3">Detect Printers</button>
+        
+        <!-- Detailed Printer Metrics -->
+        <div id="printer-details-panel" class="details-panel" style="display: none; margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <div class="stat-row">
+            <span>Status:</span>
+            <span id="detail-status" class="job-status-pill">--</span>
+          </div>
+          <div class="stat-row" style="margin-top: 8px;">
+            <span>Toner level:</span>
+            <span id="detail-toner">--</span>
+          </div>
+          <div class="progress-bar-container"><div id="toner-bar" class="progress-bar"></div></div>
+          <div class="stat-row" style="margin-top: 8px;">
+            <span>Paper level:</span>
+            <span id="detail-paper">--</span>
+          </div>
+          <div class="progress-bar-container"><div id="paper-bar" class="progress-bar"></div></div>
+        </div>
+      </section>
+
+      <!-- Manual Job Dispatcher for Debugging -->
+      <section class="card-section mt-4">
+        <h3>Manual Test Print</h3>
+        <button id="btn-test-print" class="btn btn-glow">Spool Test Doc</button>
+      </section>
+    </aside>
+
+    <!-- Main Live Spooler Telemetry Dashboard -->
+    <main class="main-content">
+      <header class="top-bar glass">
+        <div class="hub-status">
+          <span class="status-badge offline" id="connection-status">Disconnected</span>
+          <span class="hub-id" id="paired-hub-text">No active hub paired</span>
+        </div>
+        <div class="system-time" id="live-time">00:00:00</div>
+      </header>
+
+      <!-- Grid Layout for Telemetry -->
+      <div class="dashboard-grid">
+        
+        <!-- Queue list -->
+        <div class="grid-item span-2 glass">
+          <div class="item-header">
+            <h3>Active Spooler Queue</h3>
+            <span class="badge" id="queue-count-badge">0 Jobs</span>
+          </div>
+          <div class="job-list-container" id="job-list">
+            <div class="empty-state">No jobs in local queue. Ready to print.</div>
+          </div>
+        </div>
+
+        <!-- System Logs Console -->
+        <div class="grid-item glass font-mono">
+          <div class="item-header">
+            <h3>Spooler Event Logs</h3>
+            <button id="btn-clear-logs" class="btn-text">Clear</button>
+          </div>
+          <div class="console-log-box" id="log-console">
+            <div class="log-line text-slate-400">[SYSTEM] Initialization completed. Ready for pairing.</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
