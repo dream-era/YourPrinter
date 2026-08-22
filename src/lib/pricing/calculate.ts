@@ -7,7 +7,7 @@
  * config table plus the actual page count read from document metadata.
  */
 
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import type { CreateOrderInput } from "@/lib/validations/payment";
 
 export interface PriceBreakdown {

@@ -12,7 +12,7 @@
  * same pipeline, not a different pipeline.
  */
 
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { createNotification } from "@/lib/notifications/create";
 
 export async function maybeAutoAdvanceToPrinting(params: {

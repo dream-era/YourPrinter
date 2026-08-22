@@ -24,7 +24,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getAuthenticatedUser } from "@/lib/auth/get-authenticated-user";
 import { SUPPORTED_MIME_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/documents/pageCount";
 import { buildObjectKey, getSignedUploadUrl } from "@/lib/storage/b2";

@@ -78,7 +78,7 @@ export async function registerAction(data: RegisterInput) {
   }
 
   if (authData.user) {
-    const { getServiceRoleClient } = await import("@/lib/supabase/server");
+    const { getServiceRoleClient } = await import("@/lib/supabase/admin");
     const serviceRole = getServiceRoleClient();
     await serviceRole.from("profiles").insert({
       id: authData.user.id,
@@ -119,7 +119,7 @@ export async function registerBusinessAction(data: BusinessRegisterInput) {
   }
 
   if (authData.user) {
-    const { getServiceRoleClient } = await import("@/lib/supabase/server");
+    const { getServiceRoleClient } = await import("@/lib/supabase/admin");
     const serviceRole = getServiceRoleClient();
     
     await serviceRole.from("profiles").insert({

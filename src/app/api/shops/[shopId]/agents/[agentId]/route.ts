@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { requireShopOwner } from "@/lib/auth/require-shop-owner";
 
 export async function DELETE(

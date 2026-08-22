@@ -6,7 +6,7 @@
  * an audit trail, even for failures.
  */
 
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getShopRazorpayClient } from "@/lib/razorpay/client";
 
 export interface IssueRefundParams {

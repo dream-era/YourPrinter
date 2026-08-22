@@ -9,7 +9,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { requireShopOwner } from "@/lib/auth/require-shop-owner";
 import { hashPin } from "@/lib/security/pin";
 

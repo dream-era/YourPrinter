@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getShopRazorpayClient, ShopPaymentNotActiveError } from "@/lib/razorpay/client";
 import { calculateOrderPrice } from "@/lib/pricing/calculate";
 import { createOrderSchema } from "@/lib/validations/payment";

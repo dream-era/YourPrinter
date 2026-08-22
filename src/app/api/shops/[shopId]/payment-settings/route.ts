@@ -10,7 +10,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { encryptSecret } from "@/lib/security/encryption";
 import { connectRazorpaySchema } from "@/lib/validations/payment";
 import { requireShopOwner } from "@/lib/auth/require-shop-owner"; // see note below

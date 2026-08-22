@@ -9,7 +9,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { verifyHmacSignature } from "@/lib/security/encryption";
 import { getPlatformWebhookSecret } from "@/lib/razorpay/platform-client";
 

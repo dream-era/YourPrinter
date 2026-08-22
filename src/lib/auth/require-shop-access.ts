@@ -13,7 +13,8 @@
  */
 
 import { NextRequest } from "next/server";
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { verifyStaffToken } from "@/lib/auth/staff-jwt";
 
 export type RequireShopAccessResult =

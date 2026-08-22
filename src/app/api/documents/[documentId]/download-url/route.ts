@@ -18,7 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getAuthenticatedUser } from "@/lib/auth/get-authenticated-user";
 import { getSignedDownloadUrl as b2GetSignedDownloadUrl, DOWNLOAD_URL_EXPIRY_SECONDS } from "@/lib/storage/b2";
 

@@ -1,9 +1,8 @@
 import { PaymentSetupForm } from "@/components/shop/PaymentSetupForm";
 import { redirect } from "next/navigation";
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PaymentSetupPage() {
-  const supabase = getServiceRoleClient();
   const supabaseAuth = await createClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();
   
@@ -11,7 +10,7 @@ export default async function PaymentSetupPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
   if (!shop) {
     redirect("/auth/register-shop");
   }

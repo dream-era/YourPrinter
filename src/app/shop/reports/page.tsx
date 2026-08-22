@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import ReportsClient from "@/components/business/ReportsClient";
 import { redirect } from "next/navigation";
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Reports & Analytics | YourPrinter Shop",
@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function ReportsPage() {
-  const supabase = getServiceRoleClient();
   const supabaseAuth = await createClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();
   
@@ -17,7 +16,7 @@ export default async function ReportsPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
   if (!shop) {
     redirect("/auth/register-shop");
   }

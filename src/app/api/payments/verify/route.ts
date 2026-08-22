@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getShopPaymentCredentials } from "@/lib/razorpay/client";
 import { verifyHmacSignature } from "@/lib/security/encryption";
 import { verifyPaymentSchema } from "@/lib/validations/payment";

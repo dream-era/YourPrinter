@@ -20,7 +20,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { getPlatformRazorpayClient } from "@/lib/razorpay/platform-client";
 
 const MINIMUM_SETTLEMENT_PAISE = 100; // don't bother invoicing for < ₹1

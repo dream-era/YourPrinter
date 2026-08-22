@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { requireShopAccess } from "@/lib/auth/require-shop-access";
 
 const QUEUE_STATUSES = ["accepted", "printing", "ready"] as const;

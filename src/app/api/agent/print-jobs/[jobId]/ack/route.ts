@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { requireAgent } from "@/lib/auth/require-agent";
 
 export async function POST(req: NextRequest, props: { params: Promise<{ jobId: string }> }) {

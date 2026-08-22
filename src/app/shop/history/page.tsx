@@ -1,5 +1,5 @@
 import React from "react";
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import ShopHistoryClient from "@/components/shop/ShopHistoryClient";
 
 export const metadata = {
@@ -10,7 +10,6 @@ export const metadata = {
 import { redirect } from "next/navigation";
 
 export default async function ShopHistoryPage() {
-  const supabase = getServiceRoleClient();
   const supabaseAuth = await createClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();
   
@@ -18,7 +17,7 @@ export default async function ShopHistoryPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
   if (!shop) {
     redirect("/auth/register-shop");
   }

@@ -6,12 +6,11 @@ export const metadata = {
   description: "Manage pricing for every service available in your print shop.",
 };
 
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 import { redirect } from "next/navigation";
 
 export default async function ShopPricingPage() {
-  const supabase = getServiceRoleClient();
   const supabaseAuth = await createClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();
   
@@ -19,7 +18,7 @@ export default async function ShopPricingPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
   if (!shop) {
     redirect("/auth/register-shop");
   }

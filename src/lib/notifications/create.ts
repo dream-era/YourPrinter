@@ -11,7 +11,7 @@
  * real inbox.
  */
 
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { sendEmail, isSyntheticEmail } from "@/lib/notifications/email";
 import { sendSms, toE164India } from "@/lib/notifications/sms";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import BusinessDashboardClient from "@/components/business/BusinessDashboardClient";
-import { getServiceRoleClient, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 
@@ -12,7 +12,6 @@ export const metadata = {
 import { redirect } from "next/navigation";
 
 export default async function BusinessOrdersPage() {
-  const supabase = getServiceRoleClient();
   const supabaseAuth = await createClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();
   
@@ -20,14 +19,14 @@ export default async function BusinessOrdersPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabase.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
   if (!shop) {
     redirect("/auth/register-shop");
   }
   
   const shopId = shop.id;
   
-  const { data: settings } = await supabase
+  const { data: settings } = await supabaseAuth
     .from('shop_payment_settings')
     .select('status')
     .eq('shop_id', shopId)

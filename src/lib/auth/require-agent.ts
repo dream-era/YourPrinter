@@ -7,7 +7,7 @@
  */
 
 import { NextRequest } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { parseAgentKey, verifyAgentSecret } from "@/lib/security/agent-key";
 
 export type RequireAgentResult =

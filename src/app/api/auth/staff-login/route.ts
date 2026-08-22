@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { verifyPin } from "@/lib/security/pin";
 import { signStaffToken } from "@/lib/auth/staff-jwt";
 import { getStaffLoginLimiter, checkRateLimit } from "@/lib/security/rate-limit";

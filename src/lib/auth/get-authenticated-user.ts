@@ -6,7 +6,7 @@
  */
 
 import { NextRequest } from "next/server";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 
 export async function getAuthenticatedUser(req: NextRequest) {
   const authHeader = req.headers.get("authorization");

@@ -10,7 +10,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServiceRoleClient } from "@/lib/supabase/server";
+import { getServiceRoleClient } from "@/lib/supabase/admin";
 import { requireShopAccess } from "@/lib/auth/require-shop-access";
 import { parseQrPayload } from "@/lib/orders/pickup-code";
 import { assertTransition, InvalidTransitionError, type OrderStatus } from "@/lib/orders/state-machine";
