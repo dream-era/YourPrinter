@@ -6,6 +6,7 @@ const publicEnvSchema = z.object({
 
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: z.string().url({ message: "NEXT_PUBLIC_SUPABASE_URL is required" }),
+  // Must use ANON_KEY naming convention to match Vercel deployment
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1, { message: "NEXT_PUBLIC_SUPABASE_ANON_KEY is required" }),
 
   // Razorpay
