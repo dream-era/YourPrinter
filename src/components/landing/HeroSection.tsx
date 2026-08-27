@@ -200,8 +200,7 @@ export default function HeroSection() {
               className="text-[#DFFF3E] relative inline-block mt-1 sm:mt-0" 
             >
               <span className="relative z-10">anywhere.</span>
-              <span className="absolute left-0 bottom-1 w-full h-[4px] bg-[#DFFF3E] rounded-full z-10 md:hidden"></span>
-              <span className="absolute inset-0 bg-[#DFFF3E] blur-[30px] opacity-25 z-0 pointer-events-none"></span>
+              <span className="hidden md:block absolute inset-0 bg-[#DFFF3E] blur-[30px] opacity-25 z-0 pointer-events-none"></span>
             </span>
           </motion.h1>
           
