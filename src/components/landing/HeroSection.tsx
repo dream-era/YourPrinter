@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Play, Cloud, Sliders, Map, ShoppingBag } from "lucide-react";
+import { ArrowRight, Play, Cloud, Sliders, Map, ShoppingBag, Menu } from "lucide-react";
 
 export default function HeroSection() {
   const [scrolled, setScrolled] = useState(false);
@@ -56,27 +56,19 @@ export default function HeroSection() {
     <section className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-[#0A122D]">
       
       {/* Cinematic Background */}
-      <motion.div style={{ y: yParallax }} className="absolute inset-0 z-0 scale-[1.02] origin-center pointer-events-none">
-        <div className="hidden md:block relative w-full h-full">
-          <Image 
+      <motion.div 
+        className="absolute inset-0 z-0 scale-[1.02] origin-center pointer-events-none md:motion-safe:translate-y-[var(--y-parallax)]" 
+        style={{ "--y-parallax": yParallax } as any}
+      >
+        <picture>
+          <source media="(max-width: 767px)" srcSet="/image777.png" />
+          <source media="(min-width: 768px)" srcSet="/image.png" />
+          <img 
             src="/image.png" 
             alt="Premium SaaS Background"
-            fill
-            quality={100}
-            className="object-cover object-center brightness-[1.10] contrast-[1.08]"
-            priority
+            className="object-cover object-center w-full h-full brightness-[1.10] contrast-[1.08]"
           />
-        </div>
-        <div className="block md:hidden relative w-full h-full">
-          <Image 
-            src="/image777.png" 
-            alt="Mobile Background"
-            fill
-            quality={100}
-            className="object-cover object-center brightness-[1.10] contrast-[1.08]"
-            priority
-          />
-        </div>
+        </picture>
         
         {/* 1. Subtle Blue Gradient Overlay (10-18%) */}
         <div 
@@ -169,7 +161,7 @@ export default function HeroSection() {
             <Link href="/about" className="hover:text-white/80 transition-colors">About Us</Link>
           </nav>
           
-          <div className="flex items-center shrink-0 ml-2">
+          <div className="flex items-center shrink-0 ml-2 gap-2 sm:gap-3">
             <Link 
               href="/auth/signup?type=student" 
               className="bg-[#DFFF3E] text-[#0A122D] font-bold px-3 py-2 sm:px-6 sm:py-3 rounded-[12px] sm:rounded-[16px] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-1.5 w-[110px] sm:w-[150px] text-[13px] sm:text-[15px] whitespace-nowrap"
@@ -178,12 +170,17 @@ export default function HeroSection() {
               Get Started
               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             </Link>
+            
+            {/* Mobile Hamburger Menu */}
+            <button className="md:hidden flex items-center justify-center w-[36px] h-[36px] sm:w-[40px] sm:h-[40px] rounded-full bg-white text-[#0A122D] shrink-0 hover:scale-105 transition-transform">
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
           </div>
         </div>
       </motion.header>
 
       {/* Main Content (Vertically Centered & Left Aligned) */}
-      <motion.div style={{ opacity: opacityFade }} className="relative z-10 flex-1 flex flex-col justify-center max-w-[1400px] mx-auto w-full px-5 md:px-12 pt-[100px] sm:pt-[120px] pb-12 sm:pb-16 min-h-[60vh]">
+      <motion.div style={{ opacity: opacityFade }} className="relative z-10 flex-1 flex flex-col justify-center max-w-[1400px] mx-auto w-full px-5 md:px-12 pt-[100px] sm:pt-[120px] pb-24 sm:pb-16 min-h-[100svh] md:min-h-[60vh]">
         <motion.div 
           variants={containerVariants}
           initial="hidden"
@@ -194,13 +191,16 @@ export default function HeroSection() {
           <motion.h1 
             variants={itemVariants}
             className="font-[900] text-white tracking-[-1px] md:tracking-[-2px] leading-[0.95]"
-            style={{ fontSize: "clamp(42px, 12vw, 88px)", wordBreak: "break-word" }}
+            style={{ fontSize: "clamp(48px, 15vw, 88px)", wordBreak: "break-word", paddingTop: "max(16px, env(safe-area-inset-top))" }}
           >
-            Print made simple, <br className="hidden sm:block" />
+            Print <br className="md:hidden" />
+            made <br className="md:hidden" />
+            simple, <br />
             <span 
               className="text-[#DFFF3E] relative inline-block mt-1 sm:mt-0" 
             >
               <span className="relative z-10">anywhere.</span>
+              <span className="absolute left-0 bottom-1 w-full h-[4px] bg-[#DFFF3E] rounded-full z-10 md:hidden"></span>
               <span className="absolute inset-0 bg-[#DFFF3E] blur-[30px] opacity-25 z-0 pointer-events-none"></span>
             </span>
           </motion.h1>
@@ -217,49 +217,49 @@ export default function HeroSection() {
           {/* Buttons */}
           <motion.div 
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full mt-8 sm:mt-12"
+            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 w-full mt-8 sm:mt-12"
           >
             {/* Primary Button */}
             <Link 
               href="/auth/login?type=student"
-              className="group relative w-full sm:w-auto max-w-[500px] bg-[#DFFF3E] text-[#0A122D] font-bold px-6 sm:px-10 h-[64px] sm:h-[72px] rounded-[18px] flex items-center justify-center gap-3 text-[18px] transition-all duration-300 mx-auto sm:mx-0"
+              className="group relative w-full sm:w-auto md:max-w-[500px] bg-[#DFFF3E] text-[#0A122D] font-bold px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] transition-all duration-300"
               style={{ 
-                boxShadow: "0 15px 35px rgba(223,255,62,0.25)",
+                boxShadow: "0 8px 25px rgba(223,255,62,0.15)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-4px) scale(1.03)";
-                e.currentTarget.style.boxShadow = "0 20px 45px rgba(223,255,62,0.4)";
+                e.currentTarget.style.boxShadow = "0 15px 35px rgba(223,255,62,0.3)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0) scale(1)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(223,255,62,0.25)";
+                e.currentTarget.style.boxShadow = "0 8px 25px rgba(223,255,62,0.15)";
               }}
             >
-              Upload & Print
               <Cloud className="w-5 h-5 shrink-0" />
+              Upload & Print
             </Link>
 
             {/* Secondary Button */}
             <Link 
               href="/how-it-works"
-              className="group relative w-full sm:w-auto max-w-[500px] flex items-center justify-center gap-3 text-[18px] font-bold text-white px-6 sm:px-10 h-[64px] sm:h-[72px] rounded-[18px] transition-all duration-300 overflow-hidden mx-auto sm:mx-0"
+              className="group relative w-full sm:w-auto md:max-w-[500px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] font-bold text-white px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] transition-all duration-300 overflow-hidden"
               style={{ 
-                background: "rgba(255,255,255,0.12)",
+                background: "rgba(10,18,45,0.6)",
                 backdropFilter: "blur(20px)",
-                border: "1px solid rgba(255,255,255,0.25)",
+                border: "1px solid rgba(255,255,255,0.2)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.18)";
-                e.currentTarget.style.boxShadow = "0 0 35px rgba(255,255,255,0.15)";
+                e.currentTarget.style.background = "rgba(10,18,45,0.8)";
+                e.currentTarget.style.boxShadow = "0 0 25px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+                e.currentTarget.style.background = "rgba(10,18,45,0.6)";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
               How It Works
-              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 shrink-0">
-                <Play className="w-4 h-4 ml-0.5 text-white" fill="currentColor" />
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center bg-white shrink-0">
+                <Play className="w-3 h-3 sm:w-4 sm:h-4 ml-0.5 text-[#0A122D]" fill="currentColor" />
               </div>
             </Link>
           </motion.div>
