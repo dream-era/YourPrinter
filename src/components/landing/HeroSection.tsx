@@ -57,14 +57,26 @@ export default function HeroSection() {
       
       {/* Cinematic Background */}
       <motion.div style={{ y: yParallax }} className="absolute inset-0 z-0 scale-[1.02] origin-center pointer-events-none">
-        <Image 
-          src="/image.png" 
-          alt="Premium SaaS Background"
-          fill
-          quality={100}
-          className="object-cover object-center brightness-[1.10] contrast-[1.08]"
-          priority
-        />
+        <div className="hidden md:block relative w-full h-full">
+          <Image 
+            src="/image.png" 
+            alt="Premium SaaS Background"
+            fill
+            quality={100}
+            className="object-cover object-center brightness-[1.10] contrast-[1.08]"
+            priority
+          />
+        </div>
+        <div className="block md:hidden relative w-full h-full">
+          <Image 
+            src="/image777.png" 
+            alt="Mobile Background"
+            fill
+            quality={100}
+            className="object-cover object-center brightness-[1.10] contrast-[1.08]"
+            priority
+          />
+        </div>
         
         {/* 1. Subtle Blue Gradient Overlay (10-18%) */}
         <div 
@@ -138,15 +150,15 @@ export default function HeroSection() {
           background: scrolled ? "rgba(10,18,45,0.45)" : "transparent",
           backdropFilter: scrolled ? "blur(20px)" : "none",
           borderBottom: scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid transparent",
-          padding: scrolled ? "16px 0" : "24px 0",
+          padding: scrolled ? "12px 0" : "16px 0",
         }}
       >
-        <div className="max-w-[1400px] mx-auto px-6 sm:px-12 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-[36px] h-[36px] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300">
+        <div className="max-w-[1400px] mx-auto px-5 md:px-12 flex items-center justify-between h-[50px] sm:h-[60px]">
+          <Link href="/" className="flex items-center gap-2 group shrink-0 min-w-0">
+            <div className="relative w-[28px] h-[28px] sm:w-[36px] sm:h-[36px] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300 shrink-0">
               <Image src="/logo.png" alt="YourPrinter Logo" fill className="object-contain bg-white" />
             </div>
-            <span className="text-white font-extrabold text-2xl tracking-tight">YourPrinter</span>
+            <span className="text-white font-extrabold text-[16px] sm:text-2xl tracking-tight leading-none truncate">YourPrinter</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-10 text-white font-medium text-[15px]">
@@ -157,35 +169,36 @@ export default function HeroSection() {
             <Link href="/about" className="hover:text-white/80 transition-colors">About Us</Link>
           </nav>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center shrink-0 ml-2">
             <Link 
               href="/auth/signup?type=student" 
-              className="bg-[#DFFF3E] text-[#0A122D] font-bold px-7 py-3 rounded-[16px] hover:scale-105 transition-all duration-300 flex items-center gap-2 text-[15px]"
+              className="bg-[#DFFF3E] text-[#0A122D] font-bold px-3 py-2 sm:px-6 sm:py-3 rounded-[12px] sm:rounded-[16px] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-1.5 w-[110px] sm:w-[150px] text-[13px] sm:text-[15px] whitespace-nowrap"
               style={{ boxShadow: "0 4px 20px rgba(223,255,62,0.2)" }}
             >
               Get Started
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
             </Link>
           </div>
         </div>
       </motion.header>
 
       {/* Main Content (Vertically Centered & Left Aligned) */}
-      <motion.div style={{ opacity: opacityFade }} className="relative z-10 flex-1 flex flex-col justify-center max-w-[1400px] mx-auto w-full px-6 sm:px-12 pt-32 pb-16">
+      <motion.div style={{ opacity: opacityFade }} className="relative z-10 flex-1 flex flex-col justify-center max-w-[1400px] mx-auto w-full px-5 md:px-12 pt-[100px] sm:pt-[120px] pb-12 sm:pb-16 min-h-[60vh]">
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="max-w-[800px] flex flex-col" 
+          className="max-w-[800px] flex flex-col w-full" 
         >
           {/* Headline */}
           <motion.h1 
             variants={itemVariants}
-            className="text-[64px] md:text-[88px] font-[900] text-white tracking-[-2px] leading-[0.95]"
+            className="font-[900] text-white tracking-[-1px] md:tracking-[-2px] leading-[0.95]"
+            style={{ fontSize: "clamp(42px, 12vw, 88px)", wordBreak: "break-word" }}
           >
-            Print made simple, <br />
+            Print made simple, <br className="hidden sm:block" />
             <span 
-              className="text-[#DFFF3E] relative inline-block" 
+              className="text-[#DFFF3E] relative inline-block mt-1 sm:mt-0" 
             >
               <span className="relative z-10">anywhere.</span>
               <span className="absolute inset-0 bg-[#DFFF3E] blur-[30px] opacity-25 z-0 pointer-events-none"></span>
@@ -195,7 +208,7 @@ export default function HeroSection() {
           {/* Subtitle */}
           <motion.p 
             variants={itemVariants}
-            className="text-[20px] md:text-[24px] max-w-[650px] font-medium leading-[1.7] mt-8"
+            className="text-[18px] sm:text-[20px] md:text-[24px] max-w-[340px] sm:max-w-[650px] font-medium leading-[1.45] sm:leading-[1.7] mt-5 sm:mt-8"
             style={{ color: "rgba(255,255,255,0.92)" }}
           >
             Upload, customize and print your documents with trusted print shops near you. Experience the future of seamless printing.
@@ -204,12 +217,12 @@ export default function HeroSection() {
           {/* Buttons */}
           <motion.div 
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto mt-12"
+            className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full mt-8 sm:mt-12"
           >
             {/* Primary Button */}
             <Link 
               href="/auth/login?type=student"
-              className="group relative w-full sm:w-auto bg-[#DFFF3E] text-[#0A122D] font-bold px-10 h-[62px] rounded-[18px] flex items-center justify-center gap-3 text-[18px] transition-all duration-300"
+              className="group relative w-full sm:w-auto max-w-[500px] bg-[#DFFF3E] text-[#0A122D] font-bold px-6 sm:px-10 h-[64px] sm:h-[72px] rounded-[18px] flex items-center justify-center gap-3 text-[18px] transition-all duration-300 mx-auto sm:mx-0"
               style={{ 
                 boxShadow: "0 15px 35px rgba(223,255,62,0.25)",
               }}
@@ -223,13 +236,13 @@ export default function HeroSection() {
               }}
             >
               Upload & Print
-              <Cloud className="w-5 h-5" />
+              <Cloud className="w-5 h-5 shrink-0" />
             </Link>
 
             {/* Secondary Button */}
             <Link 
               href="/how-it-works"
-              className="group relative w-full sm:w-auto flex items-center justify-center gap-3 text-[18px] font-bold text-white px-10 h-[62px] rounded-[18px] transition-all duration-300 overflow-hidden"
+              className="group relative w-full sm:w-auto max-w-[500px] flex items-center justify-center gap-3 text-[18px] font-bold text-white px-6 sm:px-10 h-[64px] sm:h-[72px] rounded-[18px] transition-all duration-300 overflow-hidden mx-auto sm:mx-0"
               style={{ 
                 background: "rgba(255,255,255,0.12)",
                 backdropFilter: "blur(20px)",
@@ -245,7 +258,7 @@ export default function HeroSection() {
               }}
             >
               How It Works
-              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 shrink-0">
                 <Play className="w-4 h-4 ml-0.5 text-white" fill="currentColor" />
               </div>
             </Link>

@@ -83,7 +83,7 @@ export async function GET(_req: NextRequest, props: { params: Promise<{ shopId: 
     estimatedWaitMins,
     queueStatus,
     openUntil: "10 PM",
-    coverImages: shop.logo_url ? [shop.logo_url] : ["https://images.unsplash.com/photo-1555626906-fcf10d6851b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+    coverImages: shop.logo_url ? [shop.logo_url] : [],
     services,
     autoPrintEnabled: false,
     paymentReady: paymentSettings?.status === "active",

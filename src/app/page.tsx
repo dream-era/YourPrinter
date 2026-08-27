@@ -94,8 +94,8 @@ export default function LandingPage() {
               <div className="mt-auto pt-6 border-t border-gray-200">
                 <div className="flex -space-x-2 mb-3">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-blue-500 font-bold text-[10px] overflow-hidden">
+                      U{i}
                     </div>
                   ))}
                   <div className="w-8 h-8 rounded-full border-2 border-white bg-text-dark text-white flex items-center justify-center text-xs font-bold">
@@ -122,8 +122,8 @@ export default function LandingPage() {
                 
                 <div className="flex -space-x-3">
                   {[5, 6, 7, 8].map((i) => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-accent-lime bg-gray-200 overflow-hidden shadow-sm">
-                      <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt="User" />
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-accent-lime bg-lime-100 flex items-center justify-center text-lime-700 font-bold text-xs overflow-hidden shadow-sm">
+                      U{i}
                     </div>
                   ))}
                   <div className="w-10 h-10 rounded-full border-2 border-accent-lime bg-text-dark text-accent-lime flex items-center justify-center text-sm font-bold shadow-sm z-10 relative">

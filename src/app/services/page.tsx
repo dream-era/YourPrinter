@@ -395,7 +395,7 @@ export default function ServicesPage() {
           <div className="relative h-[400px] md:h-[500px] w-full rounded-[40px] overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
             {/* Fake Map Background */}
             <div className="absolute inset-0 bg-[#E5E9EA]">
-              <Image src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000&auto=format&fit=crop" alt="Map mockup" fill className="object-cover opacity-60 grayscale brightness-110" />
+              {/* Map background removed in production */}
             </div>
             
             {/* UI Overlay */}

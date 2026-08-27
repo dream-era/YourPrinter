@@ -23,19 +23,18 @@ export default function ProfileClient() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          // Fetch from our users table
           const { data: profile } = await supabase
-            .from("users")
+            .from("profiles")
             .select("*")
             .eq("id", user.id)
             .single();
             
-          setUser(profile || {
-            fullName: user.user_metadata?.full_name || "Student User",
-            email: user.email,
-            phone: user.user_metadata?.phone || "+91 9876543210",
-            avatarUrl: user.user_metadata?.avatar_url || "https://i.pravatar.cc/150?img=11",
-          });
+            setUser(profile || {
+              fullName: user.user_metadata?.full_name || user.email?.split('@')[0] || "User",
+              email: user.email,
+              phone: user.user_metadata?.phone || "",
+              avatarUrl: user.user_metadata?.avatar_url || "",
+            });
         } else {
           router.push("/auth/login");
         }

@@ -191,8 +191,7 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
                 MF
               </div>
               <div className="flex flex-col hidden sm:flex">
-                <span className="text-[14px] font-bold text-slate-800 leading-tight">YourPrinter Admin</span>
-                <span className="text-[12px] font-medium text-slate-400">Campus Store</span>
+                <span className="text-[14px] font-bold text-slate-800 leading-tight">Shop Admin</span>
               </div>
             </div>
           </div>
@@ -287,7 +286,7 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
                       <div className="col-span-2 text-right">Price</div>
                     </div>
 
-                    {/* Table Row (Mocking single item for print job) */}
+                    {/* Table Row */ }
                     <div className="grid grid-cols-12 gap-2 text-[14px] font-semibold text-slate-700 mb-6 px-1 items-center">
                       <div className="col-span-8 truncate pr-2">
                         {order.print_options.color === 'color' ? 'Color' : 'B&W'} Document Print

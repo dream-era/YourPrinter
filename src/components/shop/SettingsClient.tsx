@@ -17,7 +17,8 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
     contactPhone: "",
   });
   const [loading, setLoading] = useState(true);
-  const [profileImg, setProfileImg] = useState("https://i.pravatar.cc/150?img=33");
+  const [profileImg, setProfileImg] = useState("");
+  const [ownerName, setOwnerName] = useState("Shop Owner");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +111,7 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
               </div>
             )}
             <div className="hidden md:flex flex-col">
-              <span className="text-[14px] font-bold text-[#111827]">Vikram Kumar</span>
+              <span className="text-[14px] font-bold text-[#111827]">{ownerName}</span>
               <span className="text-[12px] font-medium text-[#6B7280]">Owner</span>
             </div>
             <ChevronDown className="hidden md:block w-4 h-4 text-slate-400 ml-1" />

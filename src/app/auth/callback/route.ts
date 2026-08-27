@@ -21,6 +21,25 @@ export async function GET(request: Request) {
       }
 
       const userRole = existingRole || roleParam || "student";
+      
+      // Ensure profile exists (Google OAuth doesn't call /api/profile POST)
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
+        
+      if (!existingProfile) {
+        // We use admin client because RLS might prevent unauthenticated insert or insert for self depending on setup
+        const { getServiceRoleClient } = await import("@/lib/supabase/admin");
+        const adminSupabase = getServiceRoleClient();
+        await adminSupabase.from("profiles").insert({
+          id: user.id,
+          role: userRole,
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || "User",
+          avatar_url: user.user_metadata?.avatar_url || null,
+        });
+      }
 
       // Determine where to redirect:
       // 1. Prefer explicit `next` param (from forgot-password flows, protected route bounces)

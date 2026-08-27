@@ -243,7 +243,11 @@ export default function OrderTrackingClient({ orderId }: OrderTrackingClientProp
             <div className="bg-white rounded-[24px] p-5 shadow-[0_4px_24px_rgb(0,0,0,0.04)] border border-gray-100/50">
               <div className="flex gap-4 items-center mb-5">
                 <div className="w-20 h-20 bg-gray-100 rounded-[18px] overflow-hidden shrink-0 border border-gray-200 relative">
-                  <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Shop" className="w-full h-full object-cover" />
+                  {order.shop.logo_url ? (
+                    <img src={order.shop.logo_url} alt="Shop" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs">Shop</div>
+                  )}
                   <div className="absolute inset-0 bg-black/10"></div>
                 </div>
                 <div>
@@ -419,7 +423,11 @@ export default function OrderTrackingClient({ orderId }: OrderTrackingClientProp
           <h3 className="font-bold text-lg mb-4">Shop Details</h3>
           <div className="flex gap-4 items-center mb-5">
             <div className="w-16 h-16 bg-gray-100 rounded-2xl overflow-hidden shrink-0 border border-gray-200">
-              <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Shop" className="w-full h-full object-cover" />
+              {order.shop.logo_url ? (
+                <img src={order.shop.logo_url} alt="Shop" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-400 font-bold text-xs">Shop</div>
+              )}
             </div>
             <div>
               <h4 className="font-bold text-slate-900">{order.shop.name}</h4>

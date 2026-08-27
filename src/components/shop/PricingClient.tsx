@@ -158,9 +158,11 @@ export default function PricingClient({ shopId }: { shopId: string }) {
             <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
           </button>
           <div className="flex items-center gap-3 cursor-pointer">
-            <img src="https://i.pravatar.cc/150?img=33" alt="Profile" className="w-10 h-10 rounded-full object-cover shadow-sm border border-slate-100" />
+            <div className="w-10 h-10 rounded-full bg-[#FFB5A7] text-[#FF6B57] font-bold flex items-center justify-center text-sm shadow-sm border border-slate-100">
+              ME
+            </div>
             <div className="hidden md:flex flex-col">
-              <span className="text-[14px] font-bold text-[#111827]">Vikram Kumar</span>
+              <span className="text-[14px] font-bold text-[#111827]">Shop Owner</span>
               <span className="text-[12px] font-medium text-[#6B7280]">Owner</span>
             </div>
             <ChevronDown className="hidden md:block w-4 h-4 text-slate-400 ml-1" />

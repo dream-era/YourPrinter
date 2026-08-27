@@ -42,11 +42,19 @@ export async function updateSession(request: NextRequest) {
   const isCustomerRoute = pathname.startsWith("/customer");
   const isProtectedRoute = isShopRoute || isCustomerRoute || pathname.startsWith("/admin");
 
+  const createRedirect = (url: URL) => {
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      response.cookies.set(cookie.name, cookie.value);
+    });
+    return response;
+  };
+
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     url.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(url);
+    return createRedirect(url);
   }
 
   // Role-based routing
@@ -57,14 +65,14 @@ export async function updateSession(request: NextRequest) {
     if (isShopRoute && role === "student") {
       const url = request.nextUrl.clone();
       url.pathname = "/customer/shops";
-      return NextResponse.redirect(url);
+      return createRedirect(url);
     }
     
     // Owner trying to access student routes
     if (isCustomerRoute && role === "owner") {
       const url = request.nextUrl.clone();
       url.pathname = "/shop/orders";
-      return NextResponse.redirect(url);
+      return createRedirect(url);
     }
   }
 
@@ -73,7 +81,7 @@ export async function updateSession(request: NextRequest) {
     const role = user.user_metadata?.role;
     const url = request.nextUrl.clone();
     url.pathname = role === "owner" ? "/shop/orders" : "/customer/shops";
-    return NextResponse.redirect(url);
+    return createRedirect(url);
   }
 
   return supabaseResponse;

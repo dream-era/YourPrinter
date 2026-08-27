@@ -56,7 +56,7 @@ export function useMapShops(lat?: number, lng?: number, q?: string, filter?: str
           const formatted = nearbyShops.map((d: any) => ({
             id: d.id,
             name: d.name,
-            image: d.logo_url || "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=500&q=60",
+            image: d.logo_url || "",
             latitude: d.latitude,
             longitude: d.longitude,
             rating: d.rating || 4.5,

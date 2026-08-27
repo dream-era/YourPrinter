@@ -173,7 +173,7 @@ export default function MapScreen() {
               <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
             </Link>
             <Link href="/customer/profile" className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
-              <img src="https://i.pravatar.cc/150?img=32" alt="Profile" className="w-full h-full object-cover" />
+              <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold">U</div>
             </Link>
           </div>
         </div>
