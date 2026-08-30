@@ -17,7 +17,22 @@ import {
 import HeroSection from "@/components/landing/HeroSection";
 import { Footer } from "@/components/layout/Footer";
 
-export default function LandingPage() {
+import { redirect } from "next/navigation";
+
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const params = await searchParams;
+  
+  // Auto-recovery for Google OAuth if Supabase Redirect URLs are not fully configured
+  // If Supabase falls back to the Site URL root, it passes the ?code parameter here.
+  // We intercept it and forward it to the actual callback handler.
+  if (params?.code && typeof params.code === 'string') {
+    redirect(`/auth/callback?code=${params.code}`);
+  }
+
   return (
     <div className="min-h-screen bg-background-brand overflow-hidden selection:bg-accent-lime selection:text-text-dark font-sans">
       
