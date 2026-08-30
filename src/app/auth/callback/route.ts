@@ -39,17 +39,32 @@ export async function GET(request: Request) {
       // For Google OAuth new users: set role in metadata if not already set
       const existingRole = user.user_metadata?.role as string | undefined;
       console.log("[AUTH CALLBACK] Existing role in metadata:", existingRole);
+      
+      // Strict Login Intent Validation
+      if (existingRole && roleParam && existingRole !== roleParam) {
+        console.warn(`[AUTH CALLBACK] Role mismatch! User is '${existingRole}' but tried to login as '${roleParam}'`);
+        // We sign them out because the session exchange succeeded, but they shouldn't be logged in with the wrong intent
+        await supabase.auth.signOut();
+        return NextResponse.redirect(`${origin}/auth/login?error=role_mismatch&type=${existingRole}`);
+      }
+      
+      if (!existingRole && !roleParam) {
+        console.warn("[AUTH CALLBACK] Missing login role intent for new user!");
+        await supabase.auth.signOut();
+        return NextResponse.redirect(`${origin}/auth/login?error=missing_login_role`);
+      }
+
+      const userRole = existingRole || roleParam;
+
       if (!existingRole && roleParam) {
         console.log("[AUTH CALLBACK] Updating user metadata with role:", roleParam);
         await supabase.auth.updateUser({ data: { role: roleParam } });
       }
-
-      const userRole = existingRole || roleParam || "student";
       
       // Ensure profile exists (Google OAuth doesn't call /api/profile POST)
       const { data: existingProfile, error: profileCheckError } = await supabase
         .from("profiles")
-        .select("id")
+        .select("id, role")
         .eq("id", user.id)
         .single();
         
@@ -59,6 +74,13 @@ export async function GET(request: Request) {
       }
         
       console.log("[AUTH CALLBACK] Profile exists:", !!existingProfile);
+      
+      // Validate database profile role against intent
+      if (existingProfile && roleParam && existingProfile.role !== roleParam) {
+        console.warn(`[AUTH CALLBACK] Database Role mismatch! User is '${existingProfile.role}' but tried to login as '${roleParam}'`);
+        await supabase.auth.signOut();
+        return NextResponse.redirect(`${origin}/auth/login?error=role_mismatch&type=${existingProfile.role}`);
+      }
         
       if (!existingProfile) {
         console.log("[AUTH CALLBACK] Creating new profile for role:", userRole);

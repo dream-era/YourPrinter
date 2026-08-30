@@ -24,8 +24,14 @@ export function LoginForm() {
   // Show any error passed from the auth callback via ?error= URL param
   useEffect(() => {
     const urlError = searchParams.get("error");
+    const roleType = searchParams.get("type");
     if (urlError === "auth_callback_failed") {
       setError("Authentication failed. Please try logging in again.");
+    } else if (urlError === "role_mismatch") {
+      const typeStr = roleType === "owner" ? "Business" : "Student";
+      setError(`This Google account is registered as a ${typeStr}. Please use the ${typeStr} login instead.`);
+    } else if (urlError === "missing_login_role") {
+      setError("We couldn't determine your login intent. Please select Student or Business and try again.");
     } else if (urlError) {
       setError(decodeURIComponent(urlError));
     }
