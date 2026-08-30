@@ -11,14 +11,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export default function ProfileClient() {
+export default function ProfileClient({ initialUser }: { initialUser: any }) {
   const router = useRouter();
   const supabase = createClient();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(initialUser);
+  const [loading, setLoading] = useState(!initialUser);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
+    if (initialUser) return;
     const fetchUser = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
@@ -46,13 +47,14 @@ export default function ProfileClient() {
     };
 
     fetchUser();
-  }, [supabase]);
+  }, [supabase, initialUser, router]);
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
       toast.success("Logged out successfully");
-      router.push("/auth/login"); // Or wherever the login page is
+      router.push("/");
+      router.refresh();
     } catch (error) {
       toast.error("Failed to log out");
     }

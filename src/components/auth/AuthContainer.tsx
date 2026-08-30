@@ -78,12 +78,16 @@ export function AuthContainer({ children, type }: AuthContainerProps) {
             </motion.div>
           </div>
 
-          <div className="relative z-10 mt-12 w-full max-w-[300px] mx-auto aspect-square self-center flex-shrink-0 animate-float">
+          <div className="relative z-10 mt-12 w-full max-w-[350px] mx-auto aspect-square self-center flex-shrink-0 animate-float"
+               style={{
+                 WebkitMaskImage: 'radial-gradient(circle at center, black 30%, transparent 70%)',
+                 maskImage: 'radial-gradient(circle at center, black 30%, transparent 70%)'
+               }}>
              <Image 
                 src={isStudent ? "/student_auth_illustration.png" : "/business_auth_illustration.png"} 
                 alt="Illustration" 
                 fill 
-                className="object-contain drop-shadow-2xl" 
+                className="object-cover opacity-90 mix-blend-screen" 
              />
           </div>
 

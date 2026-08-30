@@ -86,8 +86,21 @@ export function SignupForm() {
     router.push(`/auth/check-email?email=${encodeURIComponent(emailVal)}`);
   };
 
-  const handleGoogleSignup = () => {
-    window.location.href = `/api/auth/google?role=${authType === "business" ? "owner" : "student"}`;
+  const handleGoogleSignup = async () => {
+    const role = authType === "business" ? "owner" : "student";
+    // Set a cookie so the callback route knows which role to assign if the user is new
+    document.cookie = `auth_role=${role}; path=/; max-age=3600; SameSite=Lax`;
+    
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
   };
 
   return (

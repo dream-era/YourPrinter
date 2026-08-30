@@ -1,22 +1,40 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next"); // optional explicit destination
-  const roleParam = searchParams.get("role"); // passed from Google OAuth flow
+  
+  console.log("[AUTH CALLBACK] Reached /auth/callback");
+  console.log("[AUTH CALLBACK] URL:", request.url);
+  console.log("[AUTH CALLBACK] Code exists:", !!code);
 
   if (code) {
     const supabase = await createClient();
+    
+    // Read the role passed via cookie for Google OAuth flows
+    const cookieStore = await cookies();
+    const roleParam = cookieStore.get("auth_role")?.value;
+    console.log("[AUTH CALLBACK] Read auth_role cookie:", roleParam);
+
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (error) {
+      console.log("[AUTH CALLBACK] exchangeCodeForSession error:", error.message);
+    } else {
+      console.log("[AUTH CALLBACK] exchangeCodeForSession success, user exists:", !!data?.user);
+    }
 
     if (!error && data?.user) {
       const user = data.user;
 
       // For Google OAuth new users: set role in metadata if not already set
       const existingRole = user.user_metadata?.role as string | undefined;
+      console.log("[AUTH CALLBACK] Existing role in metadata:", existingRole);
       if (!existingRole && roleParam) {
+        console.log("[AUTH CALLBACK] Updating user metadata with role:", roleParam);
         await supabase.auth.updateUser({ data: { role: roleParam } });
       }
 
@@ -29,7 +47,10 @@ export async function GET(request: Request) {
         .eq("id", user.id)
         .single();
         
+      console.log("[AUTH CALLBACK] Profile exists:", !!existingProfile);
+        
       if (!existingProfile) {
+        console.log("[AUTH CALLBACK] Creating new profile for role:", userRole);
         // We use admin client because RLS might prevent unauthenticated insert or insert for self depending on setup
         const { getServiceRoleClient } = await import("@/lib/supabase/admin");
         const adminSupabase = getServiceRoleClient();
@@ -42,8 +63,6 @@ export async function GET(request: Request) {
       }
 
       // Determine where to redirect:
-      // 1. Prefer explicit `next` param (from forgot-password flows, protected route bounces)
-      // 2. Fall back to role-based default
       let redirectPath: string;
       if (next && next.startsWith("/") && !next.startsWith("/auth")) {
         redirectPath = next;
@@ -51,19 +70,29 @@ export async function GET(request: Request) {
         redirectPath = userRole === "owner" ? "/shop/orders" : "/customer/shops";
       }
 
+      console.log("[AUTH CALLBACK] Determined redirect path:", redirectPath);
+
       const forwardedHost = request.headers.get("x-forwarded-host");
       const isLocalEnv = process.env.NODE_ENV === "development";
 
+      let response;
       if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${redirectPath}`);
+        response = NextResponse.redirect(`${origin}${redirectPath}`);
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${redirectPath}`);
+        response = NextResponse.redirect(`https://${forwardedHost}${redirectPath}`);
       } else {
-        return NextResponse.redirect(`${origin}${redirectPath}`);
+        response = NextResponse.redirect(`${origin}${redirectPath}`);
       }
+
+      // Clear the temporary auth_role cookie
+      response.cookies.delete("auth_role");
+      
+      console.log("[AUTH CALLBACK] Redirecting to:", response.headers.get("Location"));
+      return response;
     }
   }
 
+  console.log("[AUTH CALLBACK] Falling back to login with error");
   // Auth code missing or exchange failed — send back to login with error
   return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`);
 }

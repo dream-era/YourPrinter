@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Play, Cloud, Sliders, Map, ShoppingBag, Menu } from "lucide-react";
@@ -11,6 +11,10 @@ export default function HeroSection() {
   const { scrollY } = useScroll();
   const yParallax = useTransform(scrollY, [0, 1000], [0, 200]);
   const opacityFade = useTransform(scrollY, [0, 600], [1, 0]);
+
+  const common = { alt: "Premium SaaS Background", fill: true, priority: true, sizes: "100vw" };
+  const { props: mobileProps } = getImageProps({ ...common, src: "/image777.webp", quality: 80 });
+  const { props: desktopProps } = getImageProps({ ...common, src: "/image.webp", quality: 90 });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,12 +65,11 @@ export default function HeroSection() {
         style={{ "--y-parallax": yParallax } as any}
       >
         <picture>
-          <source media="(max-width: 767px)" srcSet="/image777.png" />
-          <source media="(min-width: 768px)" srcSet="/image.png" />
+          <source media="(max-width: 767px)" srcSet={mobileProps.srcSet} />
+          <source media="(min-width: 768px)" srcSet={desktopProps.srcSet} />
           <img 
-            src="/image.png" 
-            alt="Premium SaaS Background"
-            className="object-cover object-center w-full h-full brightness-[1.10] contrast-[1.08]"
+            {...desktopProps}
+            className="object-cover object-center brightness-[1.10] contrast-[1.08] absolute inset-0 w-full h-full" 
           />
         </picture>
         
@@ -100,8 +103,8 @@ export default function HeroSection() {
         {/* Lighting: Soft blue glow in upper sky */}
         <div className="absolute top-0 left-[20%] w-[600px] h-[400px] bg-blue-400/20 rounded-full blur-[120px]" />
 
-        {/* Atmosphere: Stars, Particles, Soft Clouds */}
-        <div className="absolute inset-0 overflow-hidden opacity-80">
+        {/* Atmosphere: Stars, Particles, Soft Clouds - HIDDEN ON MOBILE FOR PERFORMANCE */}
+        <div className="absolute inset-0 overflow-hidden opacity-80 hidden md:block">
           <motion.div 
             animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }} 
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
@@ -148,7 +151,7 @@ export default function HeroSection() {
         <div className="max-w-[1400px] mx-auto px-5 md:px-12 flex items-center justify-between h-[50px] sm:h-[60px]">
           <Link href="/" className="flex items-center gap-2 group shrink-0 min-w-0">
             <div className="relative w-[28px] h-[28px] sm:w-[36px] sm:h-[36px] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300 shrink-0">
-              <Image src="/logo.png" alt="YourPrinter Logo" fill className="object-contain bg-white" />
+              <Image src="/logo.webp" alt="YourPrinter Logo" fill className="object-contain bg-white" />
             </div>
             <span className="text-white font-extrabold text-[16px] sm:text-2xl tracking-tight leading-none truncate">YourPrinter</span>
           </Link>
@@ -221,17 +224,9 @@ export default function HeroSection() {
             {/* Primary Button */}
             <Link 
               href="/auth/login?type=student"
-              className="group relative w-full sm:w-auto md:max-w-[500px] bg-[#DFFF3E] text-[#0A122D] font-bold px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] transition-all duration-300"
+              className="group relative w-full sm:w-auto md:max-w-[500px] bg-[#DFFF3E] text-[#0A122D] font-bold px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03]"
               style={{ 
                 boxShadow: "0 8px 25px rgba(223,255,62,0.15)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-4px) scale(1.03)";
-                e.currentTarget.style.boxShadow = "0 15px 35px rgba(223,255,62,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0) scale(1)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(223,255,62,0.15)";
               }}
             >
               <Cloud className="w-5 h-5 shrink-0" />
@@ -241,19 +236,11 @@ export default function HeroSection() {
             {/* Secondary Button */}
             <Link 
               href="/how-it-works"
-              className="group relative w-full sm:w-auto md:max-w-[500px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] font-bold text-white px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] transition-all duration-300 overflow-hidden"
+              className="group relative w-full sm:w-auto md:max-w-[500px] flex items-center justify-center gap-3 text-[17px] sm:text-[18px] font-bold text-white px-6 h-[56px] sm:h-[72px] rounded-[16px] sm:rounded-[18px] transition-all duration-300 overflow-hidden hover:bg-[rgba(10,18,45,0.8)]"
               style={{ 
                 background: "rgba(10,18,45,0.6)",
                 backdropFilter: "blur(20px)",
                 border: "1px solid rgba(255,255,255,0.2)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(10,18,45,0.8)";
-                e.currentTarget.style.boxShadow = "0 0 25px rgba(255,255,255,0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(10,18,45,0.6)";
-                e.currentTarget.style.boxShadow = "none";
               }}
             >
               How It Works
@@ -296,22 +283,12 @@ export default function HeroSection() {
                 className="w-full h-full"
               >
                 <div 
-                  className="group relative w-full h-[140px] md:h-[160px] rounded-[22px] p-5 overflow-hidden transition-all duration-500 cursor-pointer flex flex-col justify-center"
+                  className="group relative w-full h-[140px] md:h-[160px] rounded-[22px] p-5 overflow-hidden transition-all duration-500 cursor-pointer flex flex-col justify-center hover:-translate-y-1 hover:scale-[1.02] hover:bg-[rgba(255,255,255,0.14)]"
                   style={{
                     background: "rgba(255,255,255,0.10)",
                     backdropFilter: "blur(20px)",
                     border: "1px solid rgba(255,255,255,0.18)",
                     boxShadow: "0 20px 50px rgba(0,0,0,0.15)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-6px) scale(1.02)";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.14)";
-                    e.currentTarget.style.boxShadow = "0 25px 60px rgba(0,0,0,0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0) scale(1)";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.10)";
-                    e.currentTarget.style.boxShadow = "0 20px 50px rgba(0,0,0,0.15)";
                   }}
                 >
                   {/* Glass Reflection */}

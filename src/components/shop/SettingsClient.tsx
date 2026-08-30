@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, ChevronDown } from "lucide-react";
+import { Bell, ChevronDown, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 export default function SettingsClient({ shopId }: { shopId: string }) {
   const router = useRouter();
+  const supabase = createClient();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -84,6 +86,17 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
       toast.success("Shop settings saved successfully!");
     } catch (err: any) {
       toast.error(err.message || "Failed to save settings");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("Logged out successfully");
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to log out");
     }
   };
 
@@ -268,6 +281,23 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
                 Save Changes
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Danger Zone */}
+        <div className="bg-white border border-[#E5EAF5] rounded-[16px] shadow-sm overflow-hidden mt-6 md:mt-8">
+          <div className="px-4 md:px-8 py-6 border-b border-[#E5EAF5]">
+            <h2 className="text-[20px] font-bold text-red-600">Danger Zone</h2>
+            <p className="text-[14px] text-[#6B7280] mt-1">Actions that affect your account session.</p>
+          </div>
+          <div className="p-4 md:p-8">
+            <button 
+              onClick={handleLogout}
+              className="w-full sm:w-auto bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] font-bold px-8 h-12 rounded-[12px] flex items-center justify-center gap-2 hover:bg-[#FEE2E2] transition-colors shadow-sm"
+            >
+              <LogOut className="w-5 h-5" />
+              Log Out
+            </button>
           </div>
         </div>
 
