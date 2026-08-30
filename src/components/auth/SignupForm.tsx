@@ -42,48 +42,54 @@ export function SignupForm() {
       return;
     }
 
-    if (isStudent) {
-      const { registerAction } = await import("@/features/auth/actions");
-      const res = await registerAction({
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-        fullName: data.fullName,
-        phone: data.phone || "",
-        role: "student",
-        termsAccepted: data.termsAccepted,
-      });
+    try {
+      if (isStudent) {
+        const { registerAction } = await import("@/features/auth/actions");
+        const res = await registerAction({
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+          fullName: data.fullName,
+          phone: data.phone || "",
+          role: "student",
+          termsAccepted: data.termsAccepted,
+        });
 
-      if (res.error) {
-        setError(res.error);
-        setLoading(false);
-        return;
-      }
-    } else {
-      const { registerBusinessAction } = await import("@/features/auth/actions");
-      const res = await registerBusinessAction({
-        email: data.email,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-        businessName: data.businessName,
-        ownerName: data.ownerName,
-        phone: data.phone || "",
-        city: data.city || "",
-        role: "owner",
-        termsAccepted: data.termsAccepted,
-      });
+        if (res.error) {
+          setError(res.error);
+          setLoading(false);
+          return;
+        }
+      } else {
+        const { registerBusinessAction } = await import("@/features/auth/actions");
+        const res = await registerBusinessAction({
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+          businessName: data.businessName,
+          ownerName: data.ownerName,
+          phone: data.phone || "",
+          city: data.city || "",
+          role: "owner",
+          termsAccepted: data.termsAccepted,
+        });
 
-      if (res.error) {
-        setError(res.error);
-        setLoading(false);
-        return;
+        if (res.error) {
+          setError(res.error);
+          setLoading(false);
+          return;
+        }
       }
+
+      // Signup succeeded — user must verify their email before they can log in.
+      // Redirect to a "check your email" page.
+      const emailVal = (document.querySelector('input[name="email"]') as HTMLInputElement)?.value || "";
+      router.push(`/auth/check-email?email=${encodeURIComponent(emailVal)}`);
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      setError(err.message || "An unexpected error occurred during signup.");
+      setLoading(false);
     }
-
-    // Signup succeeded — user must verify their email before they can log in.
-    // Redirect to a "check your email" page.
-    const emailVal = (document.querySelector('input[name="email"]') as HTMLInputElement)?.value || "";
-    router.push(`/auth/check-email?email=${encodeURIComponent(emailVal)}`);
   };
 
   const handleGoogleSignup = async () => {

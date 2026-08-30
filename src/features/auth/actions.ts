@@ -78,14 +78,21 @@ export async function registerAction(data: RegisterInput) {
   }
 
   if (authData.user) {
-    const { getServiceRoleClient } = await import("@/lib/supabase/admin");
-    const serviceRole = getServiceRoleClient();
-    await serviceRole.from("profiles").insert({
-      id: authData.user.id,
-      role: data.role,
-      full_name: data.fullName,
-      phone: data.phone || "",
-    });
+    try {
+      const { getServiceRoleClient } = await import("@/lib/supabase/admin");
+      const serviceRole = getServiceRoleClient();
+      await serviceRole.from("profiles").insert({
+        id: authData.user.id,
+        role: data.role,
+        full_name: data.fullName,
+        phone: data.phone || "",
+      });
+    } catch (err: any) {
+      console.error("Profile creation error:", err);
+      // We do not fail the signup completely if the profile insertion fails
+      // However, we should probably warn them or return an error so they know the account isn't fully set up
+      return { error: "Account created, but profile setup failed. This is usually due to missing SUPABASE_SERVICE_ROLE_KEY on the server." };
+    }
   }
 
   return { success: true };
@@ -119,24 +126,28 @@ export async function registerBusinessAction(data: BusinessRegisterInput) {
   }
 
   if (authData.user) {
-    const { getServiceRoleClient } = await import("@/lib/supabase/admin");
-    const serviceRole = getServiceRoleClient();
-    
-    await serviceRole.from("profiles").insert({
-      id: authData.user.id,
-      role: data.role,
-      full_name: data.ownerName,
-      phone: data.phone || "",
-    });
+    try {
+      const { getServiceRoleClient } = await import("@/lib/supabase/admin");
+      const serviceRole = getServiceRoleClient();
+      await serviceRole.from("profiles").insert({
+        id: authData.user.id,
+        role: data.role,
+        full_name: data.ownerName,
+        phone: data.phone || "",
+      });
 
-    await serviceRole.from("shops").insert({
-      owner_id: authData.user.id,
-      name: data.businessName,
-      slug: data.businessName.toLowerCase().replace(/[^a-z0-9]/g, "-"),
-      address: data.city,
-      latitude: 0,
-      longitude: 0,
-    });
+      await serviceRole.from("shops").insert({
+        owner_id: authData.user.id,
+        name: data.businessName,
+        slug: data.businessName.toLowerCase().replace(/[^a-z0-9]/g, "-"),
+        address: data.city,
+        latitude: 0,
+        longitude: 0,
+      });
+    } catch (err: any) {
+      console.error("Profile/Shop creation error:", err);
+      return { error: "Account created, but profile setup failed. This is usually due to missing SUPABASE_SERVICE_ROLE_KEY on the server." };
+    }
   }
 
   return { success: true };
