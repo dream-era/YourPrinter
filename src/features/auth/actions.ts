@@ -89,9 +89,7 @@ export async function registerAction(data: RegisterInput) {
       });
     } catch (err: any) {
       console.error("Profile creation error:", err);
-      // We do not fail the signup completely if the profile insertion fails
-      // However, we should probably warn them or return an error so they know the account isn't fully set up
-      return { error: "Account created, but profile setup failed. This is usually due to missing SUPABASE_SERVICE_ROLE_KEY on the server." };
+      return { error: `Profile setup failed: ${err.message || 'Unknown error'}. (If SUPABASE_SERVICE_ROLE_KEY is set, make sure you redeployed on Vercel)` };
     }
   }
 
@@ -146,7 +144,7 @@ export async function registerBusinessAction(data: BusinessRegisterInput) {
       });
     } catch (err: any) {
       console.error("Profile/Shop creation error:", err);
-      return { error: "Account created, but profile setup failed. This is usually due to missing SUPABASE_SERVICE_ROLE_KEY on the server." };
+      return { error: `Profile setup failed: ${err.message || 'Unknown error'}. (If SUPABASE_SERVICE_ROLE_KEY is set, make sure you redeployed on Vercel)` };
     }
   }
 
