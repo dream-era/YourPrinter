@@ -11,7 +11,12 @@ export async function GET(request: Request) {
   console.log("[AUTH CALLBACK] URL:", request.url);
   console.log("[AUTH CALLBACK] Code exists:", !!code);
 
-  if (code) {
+  if (!code) {
+    console.log("[AUTH CALLBACK] Falling back to login with error: missing code");
+    return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`);
+  }
+
+  try {
     const supabase = await createClient();
     
     // Read the role passed via cookie for Google OAuth flows
@@ -22,12 +27,13 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     
     if (error) {
-      console.log("[AUTH CALLBACK] exchangeCodeForSession error:", error.message);
-    } else {
-      console.log("[AUTH CALLBACK] exchangeCodeForSession success, user exists:", !!data?.user);
-    }
+      console.error("[AUTH CALLBACK] exchangeCodeForSession error:", error.message);
+      return NextResponse.redirect(`${origin}/auth/login?error=session_exchange_failed`);
+    } 
+    
+    console.log("[AUTH CALLBACK] exchangeCodeForSession success, user exists:", !!data?.user);
 
-    if (!error && data?.user) {
+    if (data?.user) {
       const user = data.user;
 
       // For Google OAuth new users: set role in metadata if not already set
@@ -41,25 +47,40 @@ export async function GET(request: Request) {
       const userRole = existingRole || roleParam || "student";
       
       // Ensure profile exists (Google OAuth doesn't call /api/profile POST)
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: profileCheckError } = await supabase
         .from("profiles")
         .select("id")
         .eq("id", user.id)
         .single();
         
+      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
+        console.error("[AUTH CALLBACK] Profile check error:", profileCheckError);
+        // We continue anyway, as it might just be missing
+      }
+        
       console.log("[AUTH CALLBACK] Profile exists:", !!existingProfile);
         
       if (!existingProfile) {
         console.log("[AUTH CALLBACK] Creating new profile for role:", userRole);
-        // We use admin client because RLS might prevent unauthenticated insert or insert for self depending on setup
-        const { getServiceRoleClient } = await import("@/lib/supabase/admin");
-        const adminSupabase = getServiceRoleClient();
-        await adminSupabase.from("profiles").insert({
-          id: user.id,
-          role: userRole,
-          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || "User",
-          avatar_url: user.user_metadata?.avatar_url || null,
-        });
+        try {
+          // We use admin client because RLS might prevent unauthenticated insert or insert for self depending on setup
+          const { getServiceRoleClient } = await import("@/lib/supabase/admin");
+          const adminSupabase = getServiceRoleClient();
+          const { error: insertError } = await adminSupabase.from("profiles").insert({
+            id: user.id,
+            role: userRole,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || "User",
+            avatar_url: user.user_metadata?.avatar_url || null,
+          });
+          
+          if (insertError) {
+             console.error("[AUTH CALLBACK] Failed to insert profile:", insertError);
+             return NextResponse.redirect(`${origin}/auth/login?error=profile_creation_failed`);
+          }
+        } catch (adminError) {
+          console.error("[AUTH CALLBACK] Admin client error (likely missing SUPABASE_SERVICE_ROLE_KEY):", adminError);
+          return NextResponse.redirect(`${origin}/auth/login?error=profile_creation_failed`);
+        }
       }
 
       // Determine where to redirect:
@@ -79,6 +100,8 @@ export async function GET(request: Request) {
       if (isLocalEnv) {
         response = NextResponse.redirect(`${origin}${redirectPath}`);
       } else if (forwardedHost) {
+        // Fix for multiple vercel domains (e.g. preview vs production)
+        // Ensure we preserve the domain the user is actually on
         response = NextResponse.redirect(`https://${forwardedHost}${redirectPath}`);
       } else {
         response = NextResponse.redirect(`${origin}${redirectPath}`);
@@ -90,9 +113,12 @@ export async function GET(request: Request) {
       console.log("[AUTH CALLBACK] Redirecting to:", response.headers.get("Location"));
       return response;
     }
+    
+    // Fallback if data.user is missing but no error was thrown
+    return NextResponse.redirect(`${origin}/auth/login?error=session_exchange_failed`);
+    
+  } catch (err) {
+    console.error("[AUTH CALLBACK] Unhandled server error:", err);
+    return NextResponse.redirect(`${origin}/auth/login?error=internal_server_error`);
   }
-
-  console.log("[AUTH CALLBACK] Falling back to login with error");
-  // Auth code missing or exchange failed — send back to login with error
-  return NextResponse.redirect(`${origin}/auth/login?error=auth_callback_failed`);
 }
