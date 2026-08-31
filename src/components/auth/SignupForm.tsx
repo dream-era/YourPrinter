@@ -7,6 +7,7 @@ import { AuthContainer } from "./AuthContainer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Eye, EyeOff, Store, GraduationCap, User, MapPin } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { registerAction, registerBusinessAction } from "@/features/auth/actions";
 
 type AuthType = "student" | "business";
 type Method = "email" | "mobile" | "google";
@@ -44,7 +45,6 @@ export function SignupForm() {
 
     try {
       if (isStudent) {
-        const { registerAction } = await import("@/features/auth/actions");
         const res = await registerAction({
           email: data.email,
           password: data.password,
@@ -61,7 +61,6 @@ export function SignupForm() {
           return;
         }
       } else {
-        const { registerBusinessAction } = await import("@/features/auth/actions");
         const res = await registerBusinessAction({
           email: data.email,
           password: data.password,
