@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     
     if (error) {
       console.error("[AUTH CALLBACK] exchangeCodeForSession error:", error.message);
-      return NextResponse.redirect(`${origin}/auth/login?error=session_exchange_failed`);
+      return NextResponse.redirect(`${origin}/auth/login?error=session_exchange_failed&msg=${encodeURIComponent(error.message)}`);
     } 
     
     console.log("[AUTH CALLBACK] exchangeCodeForSession success, user exists:", !!data?.user);

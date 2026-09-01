@@ -25,8 +25,12 @@ export function LoginForm() {
   useEffect(() => {
     const urlError = searchParams.get("error");
     const roleType = searchParams.get("type");
+    const msg = searchParams.get("msg");
+    
     if (urlError === "auth_callback_failed") {
       setError("Authentication failed. Please try logging in again.");
+    } else if (urlError === "session_exchange_failed") {
+      setError(`Google Login Failed: ${msg ? decodeURIComponent(msg) : "Session exchange failed. Please ensure your browser allows cookies and try again."}`);
     } else if (urlError === "role_mismatch") {
       const typeStr = roleType === "owner" ? "Business" : "Student";
       setError(`This Google account is registered as a ${typeStr}. Please use the ${typeStr} login instead.`);
