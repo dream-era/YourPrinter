@@ -122,31 +122,56 @@ export default function ProfileClient({ initialUser }: { initialUser: any }) {
           <p className="text-[15px] font-bold text-[#2563EB]">{user.phone}</p>
         </motion.div>
 
-        {/* Menu Cards */}
-        <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 overflow-hidden">
-          {menuItems.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.label} href={item.href}>
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className={`flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors cursor-pointer ${
-                    index !== menuItems.length - 1 ? "border-b border-slate-50" : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-blue-50/50 flex items-center justify-center">
-                      <Icon className={`w-5 h-5 ${item.color}`} />
-                    </div>
-                    <span className="font-semibold text-[16px] text-slate-800">{item.label}</span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-slate-400" />
-                </motion.div>
-              </Link>
-            );
-          })}
+        {/* Edit Profile Form */}
+        <div className="bg-white rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100/50 p-6 flex flex-col gap-5">
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1.5">Full Name</label>
+            <input 
+              type="text" 
+              value={user.fullName || ""}
+              onChange={(e) => setUser({ ...user, fullName: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-all font-medium text-slate-900"
+              placeholder="Your Name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1.5">Email Address</label>
+            <input 
+              type="email" 
+              value={user.email || ""}
+              disabled
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-medium cursor-not-allowed"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1.5">Phone Number</label>
+            <input 
+              type="tel" 
+              value={user.phone || ""}
+              onChange={(e) => setUser({ ...user, phone: e.target.value })}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] outline-none transition-all font-medium text-slate-900"
+              placeholder="Your Phone Number"
+            />
+          </div>
+
+          <button 
+            onClick={async () => {
+              try {
+                const res = await fetch("/api/profile", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ fullName: user.fullName, phone: user.phone }),
+                });
+                if (!res.ok) throw new Error("Failed to update profile");
+                toast.success("Profile updated successfully!");
+              } catch (error: any) {
+                toast.error(error.message);
+              }
+            }}
+            className="w-full bg-[#2563EB] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-blue-500/30 mt-2"
+          >
+            Save Changes
+          </button>
         </div>
 
         {/* Logout Button */}
