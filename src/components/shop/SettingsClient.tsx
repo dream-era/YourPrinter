@@ -94,6 +94,34 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
     );
   };
 
+  const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+
+  const getBusinessHoursObj = (): Record<string, { open: string; close: string }> => {
+    if (!formData.businessHours || formData.businessHours.trim() === "") return {};
+    try {
+      return JSON.parse(formData.businessHours);
+    } catch {
+      return {};
+    }
+  };
+
+  const handleHourChange = (day: string, field: "open" | "close", value: string) => {
+    const obj = getBusinessHoursObj();
+    if (!obj[day]) obj[day] = { open: "09:00", close: "18:00" };
+    obj[day][field] = value;
+    setFormData(p => ({ ...p, businessHours: JSON.stringify(obj) }));
+  };
+
+  const toggleDay = (day: string) => {
+    const obj = getBusinessHoursObj();
+    if (obj[day]) {
+      delete obj[day];
+    } else {
+      obj[day] = { open: "09:00", close: "18:00" };
+    }
+    setFormData(p => ({ ...p, businessHours: JSON.stringify(obj) }));
+  };
+
   const handleSave = async () => {
     try {
       let parsedHours = {};
@@ -129,7 +157,7 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
           // Flatten zod details to string
           throw new Error(JSON.stringify(errData.details));
         }
-        throw new Error(errData?.error || "Failed to save settings");
+        throw new Error(errData?.error || `Failed to save settings (HTTP ${res.status}: ${res.statusText})`);
       }
       
       toast.success("Shop settings saved successfully!");
@@ -320,14 +348,49 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
             </div>
 
             <div className="pb-6 border-b border-slate-100">
-              <label className="block text-sm font-bold text-slate-900 mb-2">Business Hours (JSON format)</label>
-              <textarea 
-                rows={3}
-                value={formData.businessHours}
-                onChange={e => setFormData(p => ({ ...p, businessHours: e.target.value }))}
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-[12px] text-sm focus:outline-none focus:ring-2 focus:ring-[#2A5BE9] focus:border-transparent transition-shadow resize-none font-mono" 
-                placeholder='{"monday": {"open": "09:00", "close": "18:00"}}'
-              />
+              <label className="block text-sm font-bold text-slate-900 mb-4">Business Hours</label>
+              <div className="space-y-3">
+                {DAYS.map(day => {
+                  const hoursObj = getBusinessHoursObj();
+                  const isOpen = !!hoursObj[day];
+                  const openTime = isOpen ? hoursObj[day].open : "09:00";
+                  const closeTime = isOpen ? hoursObj[day].close : "18:00";
+
+                  return (
+                    <div key={day} className="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                      <div className="flex items-center gap-3 w-32 shrink-0">
+                        <input 
+                          type="checkbox" 
+                          checked={isOpen}
+                          onChange={() => toggleDay(day)}
+                          className="w-4 h-4 text-[#2A5BE9] rounded border-slate-300 focus:ring-[#2A5BE9]"
+                        />
+                        <span className="text-sm font-bold text-slate-900 capitalize">{day}</span>
+                      </div>
+                      
+                      {isOpen ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <input 
+                            type="time" 
+                            value={openTime}
+                            onChange={(e) => handleHourChange(day, "open", e.target.value)}
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A5BE9] focus:border-transparent"
+                          />
+                          <span className="text-slate-400 text-sm font-medium">to</span>
+                          <input 
+                            type="time" 
+                            value={closeTime}
+                            onChange={(e) => handleHourChange(day, "close", e.target.value)}
+                            className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#2A5BE9] focus:border-transparent"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-1 text-sm font-medium text-slate-400">Closed</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Submit Button */}
