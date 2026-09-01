@@ -105,43 +105,49 @@ const updateShopSchema = z.object({
 });
 
 export async function PATCH(req: NextRequest, props: { params: Promise<{ shopId: string }> }) {
-  const params = await props.params;
-  const authResult = await requireShopOwner(req, params.shopId);
-  if (!authResult.ok) {
-    return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+  try {
+    const params = await props.params;
+    const authResult = await requireShopOwner(req, params.shopId);
+    if (!authResult.ok) {
+      return NextResponse.json({ error: authResult.error }, { status: authResult.status });
+    }
+
+    const body = await req.json().catch(() => null);
+    const parsed = updateShopSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const supabase = getServiceRoleClient();
+    const update: Record<string, unknown> = {};
+    if (parsed.data.name) update.name = parsed.data.name;
+    if (parsed.data.description !== undefined) update.description = parsed.data.description;
+    if (parsed.data.address !== undefined) update.address = parsed.data.address;
+    if (parsed.data.latitude !== undefined) update.latitude = parsed.data.latitude;
+    if (parsed.data.longitude !== undefined) update.longitude = parsed.data.longitude;
+    if (parsed.data.logoUrl) update.logo_url = parsed.data.logoUrl;
+    if (parsed.data.contactEmail !== undefined) update.contact_email = parsed.data.contactEmail;
+    if (parsed.data.contactPhone !== undefined) update.contact_phone = parsed.data.contactPhone;
+    if (parsed.data.businessHours) update.business_hours = parsed.data.businessHours;
+
+    const { data: shop, error } = await supabase
+      .from("shops")
+      .update(update)
+      .eq("id", params.shopId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase update error:", error);
+      return NextResponse.json({ error: `Database Error: ${error.message}` }, { status: 500 });
+    }
+
+    return NextResponse.json({ shop });
+  } catch (err: any) {
+    console.error("Unhandled API exception:", err);
+    return NextResponse.json({ error: `Server Crash: ${err.message || "Unknown error"}` }, { status: 500 });
   }
-
-  const body = await req.json().catch(() => null);
-  const parsed = updateShopSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid input", details: parsed.error.flatten() },
-      { status: 400 }
-    );
-  }
-
-  const supabase = getServiceRoleClient();
-  const update: Record<string, unknown> = {};
-  if (parsed.data.name) update.name = parsed.data.name;
-  if (parsed.data.description !== undefined) update.description = parsed.data.description;
-  if (parsed.data.address !== undefined) update.address = parsed.data.address;
-  if (parsed.data.latitude !== undefined) update.latitude = parsed.data.latitude;
-  if (parsed.data.longitude !== undefined) update.longitude = parsed.data.longitude;
-  if (parsed.data.logoUrl) update.logo_url = parsed.data.logoUrl;
-  if (parsed.data.contactEmail !== undefined) update.contact_email = parsed.data.contactEmail;
-  if (parsed.data.contactPhone !== undefined) update.contact_phone = parsed.data.contactPhone;
-  if (parsed.data.businessHours) update.business_hours = parsed.data.businessHours;
-
-  const { data: shop, error } = await supabase
-    .from("shops")
-    .update(update)
-    .eq("id", params.shopId)
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: "Failed to update shop" }, { status: 500 });
-  }
-
-  return NextResponse.json({ shop });
 }
