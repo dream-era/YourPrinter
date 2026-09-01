@@ -44,6 +44,8 @@ export function SignupForm() {
     }
 
     try {
+      let requireEmailVerification = false;
+
       if (isStudent) {
         const res = await registerAction({
           email: data.email,
@@ -60,6 +62,7 @@ export function SignupForm() {
           setLoading(false);
           return;
         }
+        requireEmailVerification = !!res.requireEmailVerification;
       } else {
         const res = await registerBusinessAction({
           email: data.email,
@@ -78,12 +81,19 @@ export function SignupForm() {
           setLoading(false);
           return;
         }
+        requireEmailVerification = !!res.requireEmailVerification;
       }
 
-      // Signup succeeded — user must verify their email before they can log in.
-      // Redirect to a "check your email" page.
-      const emailVal = (document.querySelector('input[name="email"]') as HTMLInputElement)?.value || "";
-      router.push(`/auth/check-email?email=${encodeURIComponent(emailVal)}`);
+      if (requireEmailVerification) {
+        // Signup succeeded — user must verify their email before they can log in.
+        // Redirect to a "check your email" page.
+        const emailVal = (document.querySelector('input[name="email"]') as HTMLInputElement)?.value || "";
+        router.push(`/auth/check-email?email=${encodeURIComponent(emailVal)}`);
+      } else {
+        // Email verification is disabled in Supabase, meaning they are already logged in!
+        router.push(isStudent ? "/customer/shops" : "/shop/orders");
+        router.refresh();
+      }
     } catch (err: any) {
       console.error("Signup error:", err);
       setError(err.message || "An unexpected error occurred during signup.");

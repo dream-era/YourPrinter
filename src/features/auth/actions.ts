@@ -93,7 +93,7 @@ export async function registerAction(data: RegisterInput) {
     }
   }
 
-  return { success: true };
+  return { success: true, requireEmailVerification: !authData.session };
 }
 
 export async function registerBusinessAction(data: BusinessRegisterInput) {
@@ -148,7 +148,7 @@ export async function registerBusinessAction(data: BusinessRegisterInput) {
     }
   }
 
-  return { success: true };
+  return { success: true, requireEmailVerification: !authData.session };
 }
 
 export async function sendOtpAction(data: OtpInput) {
