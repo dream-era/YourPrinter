@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Bell, ChevronDown, LogOut } from "lucide-react";
+import { Bell, ChevronDown, LogOut, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -14,11 +14,14 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
     name: "",
     description: "",
     address: "",
+    latitude: 0,
+    longitude: 0,
     businessHours: "",
     contactEmail: "",
     contactPhone: "",
   });
   const [loading, setLoading] = useState(true);
+  const [isLocating, setIsLocating] = useState(false);
   const [profileImg, setProfileImg] = useState("");
   const [ownerName, setOwnerName] = useState("Shop Owner");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,9 +44,10 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
             name: data.name || "",
             description: data.description || "",
             address: data.address || "",
+            latitude: data.latitude || 0,
+            longitude: data.longitude || 0,
             contactEmail: data.contact_email || "",
             contactPhone: data.contact_phone || "",
-            // Simply use business hours as a string for now, or stringify it if it's json
             businessHours: typeof data.business_hours === "string" ? data.business_hours : JSON.stringify(data.business_hours || {}),
           });
           if (data.logo_url) setProfileImg(data.logo_url);
@@ -56,6 +60,39 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
     }
     loadShop();
   }, [shopId]);
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // Use OpenStreetMap Nominatim API for free reverse geocoding
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          if (!res.ok) throw new Error("Failed to fetch address");
+          const data = await res.json();
+          const addressText = data.display_name;
+          
+          setFormData(p => ({ ...p, address: addressText, latitude, longitude }));
+          toast.success("Location updated! Please verify the address.");
+        } catch (error) {
+          toast.error("Could not fetch address from coordinates.");
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        setIsLocating(false);
+        toast.error("Failed to get your location. Please check browser permissions.");
+      },
+      { enableHighAccuracy: true }
+    );
+  };
 
   const handleSave = async () => {
     try {
@@ -71,6 +108,8 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
         name: formData.name,
         description: formData.description,
         address: formData.address,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
         contactEmail: formData.contactEmail,
         contactPhone: formData.contactPhone,
         businessHours: parsedHours,
@@ -222,7 +261,17 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-900 mb-2">Shop Address</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-bold text-slate-900">Shop Address</label>
+                  <button 
+                    onClick={handleGetLocation} 
+                    disabled={isLocating}
+                    className="text-sm font-bold text-[#2A5BE9] hover:text-[#1f4cd9] flex items-center gap-1 disabled:opacity-50"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    {isLocating ? "Locating..." : "Set up my location"}
+                  </button>
+                </div>
                 <input 
                   type="text" 
                   value={formData.address}

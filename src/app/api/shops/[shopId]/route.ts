@@ -94,6 +94,8 @@ const updateShopSchema = z.object({
   name: z.string().min(2).max(120).optional(),
   description: z.string().max(1000).optional(),
   address: z.string().max(300).optional(),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
   logoUrl: z.string().url().optional(),
   contactEmail: z.string().email().optional().or(z.literal("")),
   contactPhone: z.string().max(20).optional().or(z.literal("")),
@@ -123,6 +125,8 @@ export async function PATCH(req: NextRequest, props: { params: Promise<{ shopId:
   if (parsed.data.name) update.name = parsed.data.name;
   if (parsed.data.description !== undefined) update.description = parsed.data.description;
   if (parsed.data.address !== undefined) update.address = parsed.data.address;
+  if (parsed.data.latitude !== undefined) update.latitude = parsed.data.latitude;
+  if (parsed.data.longitude !== undefined) update.longitude = parsed.data.longitude;
   if (parsed.data.logoUrl) update.logo_url = parsed.data.logoUrl;
   if (parsed.data.contactEmail !== undefined) update.contact_email = parsed.data.contactEmail;
   if (parsed.data.contactPhone !== undefined) update.contact_phone = parsed.data.contactPhone;
