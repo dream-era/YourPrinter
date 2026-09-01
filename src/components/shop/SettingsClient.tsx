@@ -97,11 +97,12 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
   const handleSave = async () => {
     try {
       let parsedHours = {};
-      try {
-        parsedHours = JSON.parse(formData.businessHours);
-      } catch (e) {
-        // If not valid JSON, just pass it as empty or wrap it
-        parsedHours = { text: formData.businessHours };
+      if (formData.businessHours.trim() !== "") {
+        try {
+          parsedHours = JSON.parse(formData.businessHours);
+        } catch (e) {
+          throw new Error("Business Hours must be valid JSON format (e.g. {\"monday\": {\"open\": \"09:00\", \"close\": \"18:00\"}})");
+        }
       }
 
       const payload = {
@@ -121,7 +122,16 @@ export default function SettingsClient({ shopId }: { shopId: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error("Failed to save settings");
+      
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        if (errData?.details) {
+          // Flatten zod details to string
+          throw new Error(JSON.stringify(errData.details));
+        }
+        throw new Error(errData?.error || "Failed to save settings");
+      }
+      
       toast.success("Shop settings saved successfully!");
     } catch (err: any) {
       toast.error(err.message || "Failed to save settings");
