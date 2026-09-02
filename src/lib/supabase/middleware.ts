@@ -29,9 +29,22 @@ export async function updateSession(request: NextRequest) {
   );
 
   let user = null;
+  let role: string | null = null;
   try {
     const response = await supabase.auth.getUser();
     user = response.data.user;
+    
+    if (user) {
+      // Always fetch the true role from the profiles table as user_metadata can be out of sync
+      // (e.g. if a student upgrades to an owner via /auth/register-shop)
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+        
+      role = profile?.role || user.user_metadata?.role || "student";
+    }
   } catch (e) {
     // Ignore network errors in middleware
   }
@@ -40,7 +53,8 @@ export async function updateSession(request: NextRequest) {
 
   const isShopRoute = pathname.startsWith("/shop") || pathname.startsWith("/dashboard");
   const isCustomerRoute = pathname.startsWith("/customer");
-  const isProtectedRoute = isShopRoute || isCustomerRoute || pathname.startsWith("/admin");
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isProtectedRoute = isShopRoute || isCustomerRoute || isAdminRoute;
 
   const createRedirect = (url: URL) => {
     const response = NextResponse.redirect(url);
@@ -58,9 +72,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Role-based routing
-  if (user) {
-    const role = user.user_metadata?.role;
-    
+  if (user && role) {
     // Student trying to access shop routes
     if (isShopRoute && role === "student") {
       const url = request.nextUrl.clone();
@@ -78,7 +90,6 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages (login/register)
   if (user && (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/register") || pathname.startsWith("/auth/signup"))) {
-    const role = user.user_metadata?.role;
     const url = request.nextUrl.clone();
     url.pathname = role === "owner" ? "/shop/orders" : "/customer/shops";
     return createRedirect(url);
