@@ -13,8 +13,14 @@
  *   shop") if precision matters for your pricing model.
  */
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse = require("pdf-parse");
+
+if (typeof global.DOMMatrix === 'undefined') {
+  (global as any).DOMMatrix = class DOMMatrix {};
+}
+if (typeof global.DOMPoint === 'undefined') {
+  (global as any).DOMPoint = class DOMPoint {};
+}
+
 import AdmZip from "adm-zip";
 import mammoth from "mammoth";
 
@@ -30,6 +36,8 @@ export async function extractPageCount(
   mimeType: string
 ): Promise<PageCountResult> {
   if (mimeType === "application/pdf") {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require("pdf-parse");
     const result = await pdfParse(buffer);
     return { pageCount: result.numpages, isEstimate: false };
   }
