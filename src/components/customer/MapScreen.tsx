@@ -123,8 +123,8 @@ export default function MapScreen() {
     if (closestShop) {
       setSelectedShopId(closestShop.id);
       setViewState({
-        latitude: closestShop.latitude - 0.005,
-        longitude: closestShop.longitude,
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
         zoom: 15
       });
       toast.success(`Found ${closestShop.name} nearby!`);
@@ -329,7 +329,7 @@ export default function MapScreen() {
             className="bg-[#2563EB] text-white rounded-full h-[56px] px-8 flex items-center gap-2 font-bold shadow-[0_12px_30px_rgba(37,99,235,0.25)] transition-colors hover:bg-[#1d4ed8]"
           >
             <LocateFixed className="w-5 h-5" />
-            Find Nearest
+            Find My Printer
           </motion.button>
         </div>
       )}
