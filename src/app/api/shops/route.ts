@@ -27,63 +27,64 @@ const createShopSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const user = await getAuthenticatedUser(req);
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const body = await req.json().catch(() => null);
-  const parsed = createShopSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid input", details: parsed.error.flatten() },
-      { status: 400 }
-    );
-  }
-
-  const supabase = getServiceRoleClient();
-
-  // Confirm the caller's profile has the 'owner' role. Adjust this if you
-  // allow a student to also become a shop owner without a separate role change.
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || profile.role !== "owner") {
-    return NextResponse.json(
-      { error: "Only accounts with the 'owner' role can create a shop" },
-      { status: 403 }
-    );
-  }
-
-  const { data: shop, error } = await supabase
-    .from("shops")
-    .insert({
-      owner_id: user.id,
-      name: parsed.data.name,
-      slug: parsed.data.slug,
-      description: parsed.data.description,
-      address: parsed.data.address,
-      latitude: parsed.data.latitude,
-      longitude: parsed.data.longitude,
-      business_hours: parsed.data.businessHours ?? null,
-      status: "pending",
-    })
-    .select()
-    .single();
-
-  if (error) {
-    if (error.code === "23505") {
-      return NextResponse.json({ error: "That shop slug is already taken" }, { status: 409 });
+  try {
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
-    return NextResponse.json({ error: "Failed to create shop" }, { status: 500 });
+
+    const body = await req.json().catch(() => null);
+    const parsed = createShopSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const supabase = getServiceRoleClient();
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || profile.role !== "owner") {
+      return NextResponse.json(
+        { error: "Only accounts with the 'owner' role can create a shop" },
+        { status: 403 }
+      );
+    }
+
+    const { data: shop, error } = await supabase
+      .from("shops")
+      .insert({
+        owner_id: user.id,
+        name: parsed.data.name,
+        slug: parsed.data.slug,
+        description: parsed.data.description,
+        address: parsed.data.address,
+        latitude: parsed.data.latitude,
+        longitude: parsed.data.longitude,
+        business_hours: parsed.data.businessHours ?? null,
+        status: "active",
+      })
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        return NextResponse.json({ error: "That shop slug is already taken" }, { status: 409 });
+      }
+      return NextResponse.json({ error: `Database Error: ${error.message}` }, { status: 500 });
+    }
+
+    await supabase.from("pricing").insert({ shop_id: shop.id });
+
+    return NextResponse.json({ shop }, { status: 201 });
+  } catch (err: any) {
+    console.error("Unhandled API exception:", err);
+    return NextResponse.json({ error: `Server Crash: ${err.message || "Unknown error"}` }, { status: 500 });
   }
-
-  // Seed a default pricing row so the shop isn't unpriceable — owner edits
-  // via PUT /api/shops/[shopId]/pricing before going live.
-  await supabase.from("pricing").insert({ shop_id: shop.id });
-
-  return NextResponse.json({ shop }, { status: 201 });
 }
