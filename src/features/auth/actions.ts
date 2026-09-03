@@ -233,3 +233,37 @@ export async function resetPasswordAction(data: ResetPasswordInput) {
 
   return { success: true };
 }
+
+export async function resetPasswordWithPinAction(data: ResetPasswordInput & { email: string; pin: string }) {
+  const validation = resetPasswordSchema.safeParse(data);
+  if (!validation.success) {
+    return { error: validation.error.errors[0].message };
+  }
+  if (!data.email || !data.pin) {
+    return { error: "Email and PIN are required" };
+  }
+
+  const supabase = await createClient();
+  
+  // 1. Verify the OTP
+  const { error: verifyError } = await supabase.auth.verifyOtp({
+    email: data.email,
+    token: data.pin,
+    type: "recovery",
+  });
+
+  if (verifyError) {
+    return { error: "Invalid or expired PIN. Please request a new one." };
+  }
+
+  // 2. Update the password (now that we have a session)
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: data.password,
+  });
+
+  if (updateError) {
+    return { error: updateError.message };
+  }
+
+  return { success: true };
+}

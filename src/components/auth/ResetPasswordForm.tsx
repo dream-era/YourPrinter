@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import { AuthContainer } from "./AuthContainer";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
-import { resetPasswordAction } from "@/features/auth/actions";
+import { Eye, EyeOff, Mail, KeyRound } from "lucide-react";
+import { resetPasswordAction, resetPasswordWithPinAction } from "@/features/auth/actions";
 import { useRouter } from "next/navigation";
 
-export function ResetPasswordForm() {
+export function ResetPasswordForm({ requiresPin }: { requiresPin?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +22,14 @@ export function ResetPasswordForm() {
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
-    const res = await resetPasswordAction({ password, confirmPassword });
+    let res;
+    if (requiresPin) {
+      const email = formData.get("email") as string;
+      const pin = formData.get("pin") as string;
+      res = await resetPasswordWithPinAction({ email, pin, password, confirmPassword });
+    } else {
+      res = await resetPasswordAction({ password, confirmPassword });
+    }
     
     if (res?.error) {
       setError(res.error);
@@ -36,7 +43,11 @@ export function ResetPasswordForm() {
     <AuthContainer type="student">
       <div className="w-full max-w-md mx-auto py-8">
         <h2 className="text-3xl font-black text-slate-900 mb-2">Create New Password</h2>
-        <p className="text-slate-500 mb-8 font-medium">Please enter your new password below.</p>
+        <p className="text-slate-500 mb-8 font-medium">
+          {requiresPin 
+            ? "Please enter the 6-digit PIN sent to your email and your new password." 
+            : "Please enter your new password below."}
+        </p>
 
         <AnimatePresence mode="wait">
           {error && (
@@ -47,6 +58,26 @@ export function ResetPasswordForm() {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {requiresPin && (
+            <>
+              <div>
+                <label className="block text-sm font-bold text-slate-900 mb-2">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input required type="email" name="email" placeholder="Enter your email" className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-[18px] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-shadow" />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-bold text-slate-900 mb-2">6-Digit PIN</label>
+                <div className="relative">
+                  <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input required type="text" name="pin" placeholder="e.g. 123456" className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-[18px] text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-shadow" />
+                </div>
+              </div>
+            </>
+          )}
+
           <div>
             <label className="block text-sm font-bold text-slate-900 mb-2">New Password</label>
             <div className="relative">

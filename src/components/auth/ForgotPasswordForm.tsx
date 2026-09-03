@@ -49,8 +49,11 @@ export function ForgotPasswordForm() {
             </motion.div>
           )}
           {success && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-emerald-50 text-emerald-600 rounded-xl text-sm font-medium border border-emerald-100">
-              Check your email for a password reset link!
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="mb-6 p-4 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium border border-emerald-100 flex flex-col gap-3">
+              <p>We've sent a 6-digit PIN to your email.</p>
+              <Link href="/auth/reset-password" className="inline-flex items-center justify-center py-2 px-4 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition-colors">
+                Enter PIN to Reset Password
+              </Link>
             </motion.div>
           )}
         </AnimatePresence>
