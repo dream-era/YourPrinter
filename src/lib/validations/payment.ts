@@ -6,7 +6,7 @@ export const connectRazorpaySchema = z.object({
     .string()
     .regex(/^rzp_(live|test)_[A-Za-z0-9]+$/, "Doesn't look like a valid Razorpay Key ID"),
   keySecret: z.string().min(10, "Key secret looks too short"),
-  webhookSecret: z.string().min(10, "Webhook secret looks too short"),
+  webhookSecret: z.string().min(10, "Webhook secret looks too short").optional().or(z.literal("")),
 });
 
 export type ConnectRazorpayInput = z.infer<typeof connectRazorpaySchema>;

@@ -63,7 +63,9 @@ export async function POST(req: NextRequest, props: { params: Promise<{ shopId: 
   const supabase = getServiceRoleClient();
 
   const keySecretEnc = encryptSecret(keySecret);
-  const webhookSecretEnc = encryptSecret(webhookSecret);
+  // Webhook is optional in the UI, but our DB requires the column to be NOT NULL. 
+  // We encrypt a dummy string if it's not provided.
+  const webhookSecretEnc = encryptSecret(webhookSecret || "dummy_webhook_secret_not_set");
 
   const { error: upsertError } = await supabase
     .from("shop_payment_settings")
