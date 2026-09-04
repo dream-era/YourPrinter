@@ -54,10 +54,10 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          merchantName: formData.merchantName,
-          keyId: formData.razorpayKeyId,
-          keySecret: formData.razorpayKeySecret,
-          webhookSecret: formData.webhookSecret || "",
+          merchantName: formData.merchantName.trim(),
+          keyId: formData.razorpayKeyId.trim(),
+          keySecret: formData.razorpayKeySecret.trim(),
+          webhookSecret: formData.webhookSecret ? formData.webhookSecret.trim() : "",
         }),
       });
       
@@ -69,9 +69,15 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
         setLastError(null);
         setFormData(prev => ({ ...prev, razorpayKeySecret: "", webhookSecret: "" }));
       } else {
-        toast.error(data.error || data.details || "Failed to verify credentials.");
+        let errorMsg = data.error || "Failed to verify credentials.";
+        if (data.details && typeof data.details === "object") {
+          errorMsg = `${data.error}: ${JSON.stringify(data.details.fieldErrors || data.details)}`;
+        } else if (data.details) {
+          errorMsg = data.details;
+        }
+        toast.error(errorMsg);
         setStatus("failed");
-        setLastError(data.details || data.error);
+        setLastError(errorMsg);
       }
     } catch (err) {
       toast.error("Network error. Please try again.");
