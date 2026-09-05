@@ -7,7 +7,7 @@
  */
 
 import Razorpay from "razorpay";
-import { getServiceRoleClient } from "@/lib/supabase/admin";
+import { getServiceRoleClient } from "@/lib/supabase/server";
 import { decryptSecret } from "@/lib/security/encryption";
 
 export class ShopPaymentNotActiveError extends Error {

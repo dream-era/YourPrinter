@@ -24,7 +24,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import Razorpay from "razorpay";
-import { getServiceRoleClient } from "@/lib/supabase/admin";
+import { getServiceRoleClient } from "@/lib/supabase/server";
 import { encryptSecret } from "@/lib/security/encryption";
 import { requireShopOwner } from "@/lib/auth/require-shop-owner";
 
@@ -39,9 +39,8 @@ const connectRazorpaySchema = z.object({
 
 export async function POST(
   req: NextRequest,
-  props: { params: Promise<{ shopId: string }> }
+  { params }: { params: { shopId: string } }
 ) {
-  const params = await props.params;
   const { shopId } = params;
 
   const authResult = await requireShopOwner(req, shopId);
@@ -65,13 +64,10 @@ export async function POST(
   let verificationError: string | null = null;
   try {
     const testClient = new Razorpay({ key_id: keyId, key_secret: keySecret });
-    // Razorpay receipt max length is 40 characters. shopId is a UUID (36 chars).
-    // Use only the first chunk of the UUID to keep it under 40.
-    const shortShopId = shopId.split('-')[0]; 
     await testClient.orders.create({
       amount: 100,
       currency: "INR",
-      receipt: `vrfy_${shortShopId}_${Date.now()}`,
+      receipt: `printq_verify_${shopId}_${Date.now()}`,
       notes: { purpose: "printq_credential_verification" },
     });
   } catch (err: any) {
@@ -158,9 +154,8 @@ export async function POST(
 
 export async function GET(
   req: NextRequest,
-  props: { params: Promise<{ shopId: string }> }
+  { params }: { params: { shopId: string } }
 ) {
-  const params = await props.params;
   const { shopId } = params;
   const authResult = await requireShopOwner(req, shopId);
   if (!authResult.ok) {

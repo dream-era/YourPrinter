@@ -47,9 +47,12 @@ export async function POST(req: NextRequest, props: { params: Promise<{ shopId: 
     return NextResponse.json({ error: "Webhook rejected" }, { status: 400 });
   }
 
-  const isValid = verifyHmacSignature(rawBody, signature, credentials.webhookSecret);
+  const isValid = credentials.webhookSecret 
+    ? verifyHmacSignature(rawBody, signature, credentials.webhookSecret)
+    : false;
+  
   if (!isValid) {
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid webhook signature or missing webhook secret" }, { status: 400 });
   }
 
   const event = JSON.parse(rawBody);
