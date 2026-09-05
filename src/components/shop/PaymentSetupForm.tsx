@@ -12,6 +12,8 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
   
   const [status, setStatus] = useState<"pending" | "active" | "failed" | "not_configured">("not_configured");
   const [lastError, setLastError] = useState<string | null>(null);
+  const [note, setNote] = useState<string | null>(null);
+  const [webhookConfigured, setWebhookConfigured] = useState(false);
 
   const [formData, setFormData] = useState({
     merchantName: "",
@@ -34,6 +36,9 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
               merchantName: data.razorpay_merchant_name,
               razorpayKeyId: data.razorpay_key_id || "",
             }));
+          }
+          if (data.webhookConfigured !== undefined) {
+            setWebhookConfigured(data.webhookConfigured);
           }
         }
       } catch (e) {
@@ -67,6 +72,8 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
         toast.success("Payment settings saved and verified successfully! ✅");
         setStatus("active");
         setLastError(null);
+        setNote(data.note || null);
+        setWebhookConfigured(data.webhookConfigured || false);
         setFormData(prev => ({ ...prev, razorpayKeySecret: "", webhookSecret: "" }));
       } else {
         let errorMsg = data.error || "Failed to verify credentials.";
@@ -137,6 +144,11 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
             {status === "failed" && lastError && (
               <p className="text-xs text-red-600 mt-1 max-w-md">{lastError}</p>
             )}
+            {note && status === "active" && (
+              <p className="text-xs text-amber-700 mt-2 max-w-md bg-amber-50 p-2.5 rounded-lg border border-amber-200 leading-relaxed font-medium">
+                {note}
+              </p>
+            )}
           </div>
         </div>
         <a 
@@ -203,7 +215,18 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
           </div>
           
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Webhook Secret (Optional)</label>
+            <label className="flex items-center justify-between text-sm font-bold text-slate-700 mb-2">
+              <span>Webhook Secret (Optional)</span>
+              {webhookConfigured ? (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-0.5 rounded flex items-center gap-1 border border-green-200">
+                  <CheckCircle2 className="w-3 h-3" /> Configured
+                </span>
+              ) : (
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100 px-2 py-0.5 rounded flex items-center gap-1 border border-slate-200">
+                  Not Configured
+                </span>
+              )}
+            </label>
             <div className="relative">
               <input 
                 type={showWebhook ? "text" : "password"} 
