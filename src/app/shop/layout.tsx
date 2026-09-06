@@ -13,6 +13,7 @@ import {
   Users,
   BarChart3
 } from "lucide-react";
+import { PaymentBanner } from "@/components/shop/PaymentBanner";
 
 export default function BusinessLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -86,6 +87,7 @@ export default function BusinessLayout({ children }: { children: React.ReactNode
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full min-w-0 bg-[#F9FAFB] pb-[80px] md:pb-0 overflow-y-auto">
+        <PaymentBanner />
         {children}
       </main>
 

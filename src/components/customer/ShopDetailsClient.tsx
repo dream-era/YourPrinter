@@ -274,14 +274,21 @@ export default function ShopDetailsClient({ shopId }: { shopId: string }) {
       {/* Sticky Bottom Primary Action */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-100 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-40">
         <div className="max-w-3xl mx-auto">
-          <motion.button 
-            whileTap={{ scale: 0.98 }}
-            onClick={() => router.push(`/customer/upload?shopId=${shop.id}`)}
-            className="w-full bg-slate-900 text-white font-semibold text-lg py-4 rounded-[20px] shadow-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
-          >
-            <FileText className="w-5 h-5" />
-            Upload & Print
-          </motion.button>
+          {shop.paymentReady ? (
+            <motion.button 
+              whileTap={{ scale: 0.98 }}
+              onClick={() => router.push(`/customer/upload?shopId=${shop.id}`)}
+              className="w-full bg-slate-900 text-white font-semibold text-lg py-4 rounded-[20px] shadow-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+            >
+              <FileText className="w-5 h-5" />
+              Upload & Print
+            </motion.button>
+          ) : (
+            <div className="w-full bg-slate-100 text-slate-500 font-medium text-center py-4 rounded-[20px] border border-slate-200 flex flex-col items-center justify-center">
+              <span className="text-sm">This shop is currently completing setup</span>
+              <span className="text-xs">and cannot accept orders yet.</span>
+            </div>
+          )}
         </div>
       </div>
 

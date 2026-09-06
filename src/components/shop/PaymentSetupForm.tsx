@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { Eye, EyeOff, ShieldCheck, CheckCircle2, AlertTriangle, ExternalLink, Loader2, IndianRupee } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, CheckCircle2, Loader2 } from "lucide-react";
+import { PaymentStatusWidget } from "./PaymentStatusWidget";
 
 export function PaymentSetupForm({ shopId }: { shopId: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -115,56 +116,16 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
       </div>
 
       {/* Status Card */}
-      <div className={`border rounded-2xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between ${
-        status === "active" ? "bg-green-50 border-green-200" : 
-        status === "failed" ? "bg-red-50 border-red-200" : 
-        "bg-slate-50 border-slate-200"
-      }`}>
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-full ${
-            status === "active" ? "bg-green-100 text-green-600" : 
-            status === "failed" ? "bg-red-100 text-red-600" : 
-            "bg-slate-200 text-slate-500"
-          }`}>
-            {status === "active" ? <CheckCircle2 className="w-6 h-6" /> : 
-             status === "failed" ? <AlertTriangle className="w-6 h-6" /> : 
-             <IndianRupee className="w-6 h-6" />}
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-slate-500 mb-0.5">Connection Status</p>
-            <h4 className={`text-lg font-bold ${
-              status === "active" ? "text-green-700" : 
-              status === "failed" ? "text-red-700" : 
-              "text-slate-700"
-            }`}>
-              {status === "active" ? "Connected & Verified" : 
-               status === "failed" ? "Verification Failed" : 
-               "Not Configured"}
-            </h4>
-            {status === "failed" && lastError && (
-              <p className="text-xs text-red-600 mt-1 max-w-md">{lastError}</p>
-            )}
-            {note && status === "active" && (
-              <p className="text-xs text-amber-700 mt-2 max-w-md bg-amber-50 p-2.5 rounded-lg border border-amber-200 leading-relaxed font-medium">
-                {note}
-              </p>
-            )}
-          </div>
-        </div>
-        <a 
-          href="https://dashboard.razorpay.com/app/keys" 
-          target="_blank" 
-          rel="noreferrer"
-          className="w-full md:w-auto justify-center text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-white px-4 py-2.5 md:py-2 rounded-xl shadow-sm border border-slate-100 transition-all hover:shadow"
-        >
-          Get API Keys <ExternalLink className="w-4 h-4" />
-        </a>
-      </div>
+      <PaymentStatusWidget status={status} lastError={lastError} webhookConfigured={webhookConfigured} />
 
       <form onSubmit={onSubmit} className="bg-white border border-slate-200 rounded-3xl p-5 md:p-8 shadow-sm space-y-6">
         <div className="border-b border-slate-100 pb-5 mb-6">
           <h2 className="text-xl font-bold text-slate-900">API Credentials</h2>
-          <p className="text-sm text-slate-500 mt-1">Enter your live Razorpay API keys to start accepting payments.</p>
+          <p className="text-sm text-slate-500 mt-1">
+            {status === "active" 
+              ? "Re-enter your Key ID and Key Secret to update or reconnect your account."
+              : "Enter your live Razorpay API keys to start accepting payments."}
+          </p>
         </div>
 
         <div className="space-y-5">
@@ -211,7 +172,11 @@ export function PaymentSetupForm({ shopId }: { shopId: string }) {
                 {showSecret ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-            {status === "active" && <p className="text-xs text-slate-500 mt-2 font-medium">Leave blank to keep existing secret.</p>}
+            {status === "active" && (
+              <p className="text-xs text-slate-500 mt-2 font-medium">
+                Please re-enter your Secret to confirm updates.
+              </p>
+            )}
           </div>
           
           <div>

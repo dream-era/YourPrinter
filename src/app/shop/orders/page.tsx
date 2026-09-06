@@ -3,6 +3,7 @@ import BusinessDashboardClient from "@/components/business/BusinessDashboardClie
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
+import { PaymentStatusWidget } from "@/components/shop/PaymentStatusWidget";
 
 export const metadata = {
   title: "Orders | YourPrinter Shop",
@@ -28,28 +29,19 @@ export default async function BusinessOrdersPage() {
   
   const { data: settings } = await supabaseAuth
     .from('shop_payment_settings')
-    .select('status')
+    .select('status, last_verification_error, razorpay_webhook_secret_enc')
     .eq('shop_id', shopId)
     .single();
     
-  const paymentSetupIncomplete = !settings || settings.status !== "active";
+  const status = settings?.status || "not_configured";
+  const lastError = settings?.last_verification_error || null;
+  const webhookConfigured = !!settings?.razorpay_webhook_secret_enc;
 
   return (
     <div className="flex flex-col h-full">
-      {paymentSetupIncomplete && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 m-6 mb-0 rounded shadow-sm shrink-0">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
-            <p className="text-sm text-red-700">
-              <strong className="font-bold">🚨 Payment Setup Required: </strong>
-              Students cannot place paid orders until your Razorpay account is connected.
-            </p>
-            <Link href="/shop/settings/payment" className="ml-auto text-sm bg-red-100 hover:bg-red-200 text-red-800 font-semibold py-1.5 px-4 rounded transition-colors">
-              Complete Setup
-            </Link>
-          </div>
-        </div>
-      )}
+      <div className="px-6 pt-6">
+        <PaymentStatusWidget status={status as any} lastError={lastError} webhookConfigured={webhookConfigured} />
+      </div>
       <BusinessDashboardClient shopId={shopId} />
     </div>
   );
