@@ -19,8 +19,20 @@ export function validatePDFFile(file: File): { isValid: boolean; error?: string 
     return { isValid: false, error: "No file provided." };
   }
 
-  if (file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
-    return { isValid: false, error: "Only PDF files (.pdf) are allowed." };
+  const allowedTypes = [
+    "application/pdf",
+    "image/png",
+    "image/jpeg",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+  const allowedExtensions = [".pdf", ".png", ".jpg", ".jpeg", ".pptx", ".docx"];
+
+  const isValidType = allowedTypes.includes(file.type);
+  const isValidExt = allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+
+  if (!isValidType && !isValidExt) {
+    return { isValid: false, error: "Only PDF, DOCX, PPTX, PNG, and JPG files are allowed." };
   }
 
   const MAX_SIZE_MB = 50;
