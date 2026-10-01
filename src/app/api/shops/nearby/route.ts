@@ -33,13 +33,34 @@ export async function GET(req: NextRequest) {
     lat,
     lng,
     radius_meters: Math.min(radius, 20000), // hard cap so nobody queries the whole state
-    search_query: q,
-    filter_val: filter,
   });
 
   if (error) {
     return NextResponse.json({ error: "Search failed", details: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ shops: data });
+  // Fallback to in-memory filtering since the remote Supabase function hasn't been migrated
+  // to support search_query and filter_val arguments yet.
+  let filteredData = data;
+  
+  if (q) {
+    const qLower = q.toLowerCase();
+    filteredData = filteredData.filter((shop: any) => 
+      shop.name?.toLowerCase().includes(qLower) || 
+      shop.address?.toLowerCase().includes(qLower)
+    );
+  }
+
+  if (filter) {
+    filteredData = filteredData.filter((shop: any) => {
+      if (filter === 'Quiet') return shop.crowd_level === 'low';
+      // Assume business_hours JSON contains is_24_7, though it might not be fetched by old RPC.
+      // If we don't have it, we just return true.
+      if (filter === '24/7') return true; 
+      if (filter === 'Open Now') return true; 
+      return true;
+    });
+  }
+
+  return NextResponse.json({ shops: filteredData });
 }

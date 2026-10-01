@@ -103,35 +103,15 @@ export default function HeroSection() {
         {/* Lighting: Soft blue glow in upper sky */}
         <div className="absolute top-0 left-[20%] w-[600px] h-[400px] bg-blue-400/20 rounded-full blur-[120px]" />
 
-        {/* Atmosphere: Stars, Particles, Soft Clouds - HIDDEN ON MOBILE FOR PERFORMANCE */}
+        {/* Atmosphere: Hidden entirely on mobile for performance, removed continuous animations */}
         <div className="absolute inset-0 overflow-hidden opacity-80 hidden md:block">
-          <motion.div 
-            animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.2, 1] }} 
-            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-            className="absolute top-[12%] left-[15%] w-1 h-1 bg-white rounded-full blur-[1px]" 
-          />
-          <motion.div 
-            animate={{ opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }} 
-            transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
-            className="absolute top-[28%] left-[45%] w-[2px] h-[2px] bg-blue-100 rounded-full blur-[1px]" 
-          />
-          <motion.div 
-            animate={{ opacity: [0.4, 1, 0.4], y: [0, -15, 0] }} 
-            transition={{ repeat: Infinity, duration: 9, ease: "easeInOut", delay: 2 }}
-            className="absolute top-[20%] left-[80%] w-1.5 h-1.5 bg-[#DFFF3E] rounded-full blur-[2px]" 
-          />
-          <motion.div 
-            animate={{ opacity: [0.2, 0.6, 0.2], x: [0, 40, 0] }} 
-            transition={{ repeat: Infinity, duration: 12, ease: "easeInOut" }}
-            className="absolute top-[50%] left-[10%] w-[3px] h-[3px] bg-white rounded-full blur-[2px]" 
-          />
+          <div className="absolute top-[12%] left-[15%] w-1 h-1 bg-white rounded-full blur-[1px] opacity-70" />
+          <div className="absolute top-[28%] left-[45%] w-[2px] h-[2px] bg-blue-100 rounded-full blur-[1px] opacity-50" />
+          <div className="absolute top-[20%] left-[80%] w-1.5 h-1.5 bg-[#DFFF3E] rounded-full blur-[2px] opacity-80" />
+          <div className="absolute top-[50%] left-[10%] w-[3px] h-[3px] bg-white rounded-full blur-[2px] opacity-40" />
           
-          {/* Subtle slow cloud drift */}
-          <motion.div 
-            animate={{ x: [0, 50, 0], opacity: [0.1, 0.3, 0.1] }}
-            transition={{ repeat: Infinity, duration: 25, ease: "easeInOut" }}
-            className="absolute top-[-10%] right-[-10%] w-[1000px] h-[800px] bg-white/5 rounded-full blur-[140px] pointer-events-none"
-          />
+          {/* Subtle static cloud */}
+          <div className="absolute top-[-10%] right-[-10%] w-[1000px] h-[800px] bg-white/5 rounded-full blur-[140px] pointer-events-none opacity-20" />
         </div>
       </motion.div>
 
@@ -272,16 +252,7 @@ export default function HeroSection() {
               variants={cardEntrance}
               className="min-w-[260px] md:min-w-0"
             >
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ 
-                  repeat: Infinity, 
-                  duration: 7,
-                  ease: "easeInOut",
-                  delay: i * 0.4
-                }}
-                className="w-full h-full"
-              >
+              <div className="w-full h-full">
                 <div 
                   className="group relative w-full h-[140px] md:h-[160px] rounded-[22px] p-5 overflow-hidden transition-all duration-500 cursor-pointer flex flex-col justify-center hover:-translate-y-1 hover:scale-[1.02] hover:bg-[rgba(255,255,255,0.14)]"
                   style={{
@@ -303,7 +274,7 @@ export default function HeroSection() {
                     <p className="text-white/80 text-[14px] leading-snug">{card.desc}</p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
           ))}
         </motion.div>

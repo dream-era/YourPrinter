@@ -319,10 +319,10 @@ export default function OrdersListClient({ initialOrders }: { initialOrders: Ord
                 </p>
                 {!searchQuery && (
                   <Link 
-                    href="/customer/upload"
+                    href="/customer/shops"
                     className="bg-[#2563EB] text-white font-bold py-3.5 px-8 rounded-[16px] hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25"
                   >
-                    Upload & Print
+                    Find a Print Shop
                   </Link>
                 )}
               </motion.div>

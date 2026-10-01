@@ -11,6 +11,7 @@ import {
   FileText, ChevronDown, ChevronUp, RefreshCw, Heart, Share2, Check
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import OrderChat from "@/components/chat/OrderChat";
 
 type OrderTrackingClientProps = {
   orderId: string;
@@ -503,6 +504,11 @@ export default function OrderTrackingClient({ orderId }: OrderTrackingClientProp
               Report Issue
             </button>
           </div>
+        </div>
+
+        {/* Real-time Chat */}
+        <div className="mb-4">
+          <OrderChat orderId={orderId} />
         </div>
 
       </main>

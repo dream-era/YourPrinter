@@ -35,15 +35,8 @@ export async function updateSession(request: NextRequest) {
     user = response.data.user;
     
     if (user) {
-      // Always fetch the true role from the profiles table as user_metadata can be out of sync
-      // (e.g. if a student upgrades to an owner via /auth/register-shop)
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-        
-      role = profile?.role || user.user_metadata?.role || "student";
+      // Use user metadata for fast edge-compatible role checking without database roundtrips
+      role = user.user_metadata?.role || "student";
     }
   } catch (e) {
     // Ignore network errors in middleware

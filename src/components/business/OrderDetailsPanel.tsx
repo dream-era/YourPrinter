@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import OrderChat from "@/components/chat/OrderChat";
 
 export default function OrderDetailsPanel({ 
   orderId, 
@@ -367,6 +368,11 @@ export default function OrderDetailsPanel({
                 <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
               </div>
             )}
+          </section>
+
+          {/* 8. REAL-TIME CHAT */}
+          <section>
+            <OrderChat orderId={orderId} />
           </section>
 
         </div>

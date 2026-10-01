@@ -27,6 +27,7 @@ interface ShopDetails {
   coverImages: string[];
   services: string[];
   autoPrintEnabled: boolean;
+  paymentReady?: boolean;
 }
 
 const SERVICE_ICONS: Record<string, React.ReactNode> = {
@@ -192,8 +193,8 @@ export default function ShopDetailsClient({ shopId }: { shopId: string }) {
           <h1 className="text-2xl font-bold text-slate-900 leading-tight pr-4">{shop.name}</h1>
           <div className="flex items-center gap-1 shrink-0 pt-1">
             <Star className="w-5 h-5 fill-blue-600 text-blue-600" />
-            <span className="font-bold text-slate-900">{shop.rating.toFixed(1)}</span>
-            <span className="text-slate-500 text-sm">({shop.rating_count})</span>
+            <span className="font-bold text-slate-900">{(shop.rating || 0).toFixed(1)}</span>
+            <span className="text-slate-500 text-sm">({shop.rating_count || 0})</span>
           </div>
         </div>
 
@@ -203,10 +204,10 @@ export default function ShopDetailsClient({ shopId }: { shopId: string }) {
         </div>
 
         <div className="flex items-center gap-2 text-slate-500 text-sm mb-6">
-          <span>{shop.distanceKm.toFixed(1)} km away</span>
+          <span>{(shop.distanceKm || 0).toFixed(1)} km away</span>
           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
           <span className="flex items-center gap-1">
-             🚶 Walking {Math.ceil(shop.distanceKm * 12)} min
+             🚶 Walking {Math.ceil((shop.distanceKm || 0) * 12)} min
           </span>
         </div>
 

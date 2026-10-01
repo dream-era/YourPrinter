@@ -72,6 +72,14 @@ export default function UploadClient() {
   const searchParams = useSearchParams();
   const shopId = searchParams.get("shopId") || "";
 
+  // Redirect to shops if no shop is selected
+  React.useEffect(() => {
+    if (!shopId) {
+      toast.error("Please select a print shop first.");
+      router.push("/customer/shops");
+    }
+  }, [shopId, router]);
+
   const [recentFiles, setRecentFiles] = useState<UploadedFile[]>([]);
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
