@@ -20,7 +20,8 @@ export default async function BusinessOrdersPage() {
     redirect("/auth/login");
   }
 
-  const { data: shop } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).single();
+  const { data: shop, error: shopError } = await supabaseAuth.from('shops').select('id').eq('owner_id', user.id).maybeSingle();
+  
   if (!shop) {
     redirect("/auth/register-shop");
   }
@@ -31,7 +32,7 @@ export default async function BusinessOrdersPage() {
     .from('shop_payment_settings')
     .select('status, last_verification_error, razorpay_webhook_secret_enc')
     .eq('shop_id', shopId)
-    .single();
+    .maybeSingle();
     
   const status = settings?.status || "not_configured";
   const lastError = settings?.last_verification_error || null;
