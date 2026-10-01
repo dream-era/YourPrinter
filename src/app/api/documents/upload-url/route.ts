@@ -122,6 +122,7 @@ export async function POST(req: NextRequest) {
         uploaded_by: user.id,
         shop_id: body.shopId,
         storage_path: storageKey,
+        storage_provider: "backblaze",
         original_filename: body.fileName,
         mime_type: body.fileType,
         size_bytes: body.fileSize,

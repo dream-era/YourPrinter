@@ -41,7 +41,7 @@ export async function GET(
   // ── 2. Fetch document ──────────────────────────────────────────────────────
   const { data: document, error } = await supabase
     .from("documents")
-    .select("id, storage_path, uploaded_by, shop_id, status")
+    .select("id, storage_path, storage_provider, uploaded_by, shop_id, status")
     .eq("id", params.documentId)
     .single();
 
@@ -93,7 +93,7 @@ export async function GET(
   }
 
   // ── 5. Generate signed URL — provider-specific ────────────────────────────
-  const provider = "backblaze"; // All downloads use Backblaze after migration
+  const provider = document.storage_provider ?? "supabase"; // default for legacy rows without the column
 
   if (provider === "backblaze") {
     // ── B2 signed download URL (new documents) ──────────────────────────────
