@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
         mime_type: body.fileType,
         size_bytes: body.fileSize,
         page_count: body.pageCount,
-        status: "uploading",
+        status: "processing",
       })
       .select()
       .single();
