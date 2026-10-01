@@ -9,7 +9,7 @@ const supabase = createClient(
 );
 
 async function main() {
-  const email = 'test_business_owner@example.com';
+  const email = 'coimbatore_business@example.com';
   const password = 'Password123!';
   
   const { data, error } = await supabase.auth.admin.createUser({
@@ -40,11 +40,11 @@ async function main() {
     // Create Shop
     await supabase.from("shops").insert({
       owner_id: user.id,
-      name: 'Test Print Shop',
-      slug: 'test-print-shop',
-      address: '123 Test Ave, Tech City',
-      latitude: 0,
-      longitude: 0,
+      name: 'Coimbatore Fast Prints',
+      slug: 'coimbatore-fast-prints',
+      address: 'RS Puram, Coimbatore, Tamil Nadu',
+      latitude: 11.0168,
+      longitude: 76.9558,
       contact_email: email,
       contact_phone: '9876543210'
     });

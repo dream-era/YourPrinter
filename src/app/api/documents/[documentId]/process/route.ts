@@ -38,7 +38,7 @@ export async function POST(
   // ── 2. Fetch document ──────────────────────────────────────────────────────
   const { data: document, error: fetchError } = await supabase
     .from("documents")
-    .select("id, uploaded_by, storage_path, storage_provider, status")
+    .select("id, uploaded_by, storage_path, status")
     .eq("id", params.documentId)
     .single();
 
@@ -62,7 +62,7 @@ export async function POST(
   }
 
   // ── 5. Verify the file actually exists in B2 (for backblaze uploads) ───────
-  if (document.storage_provider === "backblaze") {
+  if (true) { // All new uploads go through Backblaze
     let fileFound: boolean;
     try {
       fileFound = await b2Exists(document.storage_path);
