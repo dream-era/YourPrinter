@@ -28,8 +28,8 @@ type Order = {
   amount_paise: number;
   pickup_code?: string;
   student?: {
-    first_name: string;
-    last_name: string;
+    full_name: string;
+    phone?: string;
   };
 };
 
@@ -124,7 +124,7 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
     return orders.filter(o => {
       const matchStatus = filterStatus === "all" || o.status === filterStatus;
       const q = searchQuery.toLowerCase();
-      const name = `${o.student?.first_name || ""} ${o.student?.last_name || ""}`.toLowerCase();
+      const name = `${o.student?.full_name || ""}`.toLowerCase();
       const matchSearch = name.includes(q) || (o.order_number && o.order_number.toLowerCase().includes(q)) || o.id.toLowerCase().includes(q);
       return matchStatus && matchSearch;
     });
@@ -237,8 +237,9 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AnimatePresence>
               {filteredOrders.map(order => {
-                const fName = order.student?.first_name || "Guest";
-                const lName = order.student?.last_name || "";
+                const fullName = order.student?.full_name || "Guest";
+                const fName = fullName.split(' ')[0];
+                const lName = fullName.split(' ').slice(1).join(' ');
                 const isSelected = selectedOrder?.id === order.id;
                 
                 return (
@@ -289,10 +290,10 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
                     {/* Table Row */ }
                     <div className="grid grid-cols-12 gap-2 text-[14px] font-semibold text-slate-700 mb-6 px-1 items-center">
                       <div className="col-span-8 truncate pr-2">
-                        {order.print_options.color === 'color' ? 'Color' : 'B&W'} Document Print
+                        {order.print_options?.color === 'color' ? 'Color' : 'B&W'} Document Print
                       </div>
-                      <div className="col-span-2 text-center">{order.print_options.copies}</div>
-                      <div className="col-span-2 text-right">₹{(order.amount_paise / 100).toFixed(2)}</div>
+                      <div className="col-span-2 text-center">{order.print_options?.copies || 1}</div>
+                      <div className="col-span-2 text-right">₹{((order.amount_paise || 0) / 100).toFixed(2)}</div>
                     </div>
 
                     <div className="h-[1px] w-full bg-slate-100 mb-5"></div>
@@ -300,7 +301,7 @@ export default function BusinessDashboardClient({ shopId }: { shopId: string }) 
                     {/* Total Row */}
                     <div className="flex justify-between items-center mb-6 px-1">
                       <span className="font-bold text-[18px] text-slate-800">Total</span>
-                      <span className="font-bold text-[18px] text-slate-800">₹{(order.amount_paise / 100).toFixed(2)}</span>
+                      <span className="font-bold text-[18px] text-slate-800">₹{((order.amount_paise || 0) / 100).toFixed(2)}</span>
                     </div>
 
                     {/* Buttons */}
