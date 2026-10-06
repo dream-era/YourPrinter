@@ -82,7 +82,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages (login/register)
-  if (user && (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/register") || pathname.startsWith("/auth/signup"))) {
+  if (user && (pathname.startsWith("/auth/login") || pathname.startsWith("/auth/signup"))) {
     const url = request.nextUrl.clone();
     url.pathname = role === "owner" ? "/shop/orders" : "/customer/shops";
     return createRedirect(url);
